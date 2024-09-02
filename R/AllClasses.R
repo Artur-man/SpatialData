@@ -1,7 +1,7 @@
-#' @importClassesFrom S4Arrays Array 
+#' @importClassesFrom S4Arrays Array
 setClassUnion(
     "Array_OR_array_OR_df",
-    c("Array", "array", "data.frame"))
+    c("Array", "array", "data.frame", "ZarrArray"))
 
 .Zattrs <- setClass(
     Class="Zattrs",

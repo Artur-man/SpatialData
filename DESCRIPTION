@@ -39,7 +39,9 @@ Imports:
   SummarizedExperiment,
   SingleCellExperiment,
   utils, 
-  zellkonverter
+  zellkonverter,
+  ZarrArray,
+  pizzarr
 Suggests: 
   BiocStyle,
   knitr,
@@ -55,6 +57,8 @@ biocViews:
   Transcriptomics, 
   SingleCell,
   Spatial
+remotes:
+    Artur-man/pizzarr, BIMSBbioinfo/ZarrArray
 VignetteBuilder: knitr
 RoxygenNote: 7.2.3
 Encoding: UTF-8
