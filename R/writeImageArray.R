@@ -49,5 +49,6 @@ writeImageArray <- function(image, path, ...) {
 
     # TODO: need to adapt once this is fixed
     # https://github.com/grimbough/Rarr/issues/1
-    write(metadata, file.path(paste0(path, path), "/.zattrs"))
+    # write(metadata, file.path(paste0(path, path), "/.zattrs"))
+    write(metadata, file.path(paste0(path), "/.zattrs"))
 }
