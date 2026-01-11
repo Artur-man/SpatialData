@@ -265,6 +265,48 @@ setMethod("addCT", "SpatialDataElement", \(x, name, type, data) {
     if (!.) f(t)
 }
 
+# make ----
+
+.make_axes_meta <- function(x, unit = FALSE){
+  lapply(x, \(.){
+    meta <- list(names = ., 
+                 type = if(. == "c") "channel" else "space")
+    if(unit)
+      meta <- c(meta, list(unit = "unit"))
+    meta
+  })
+}
+
+.make_empty_ct <- function(x){
+  space <- .make_axes_meta(x, unit = TRUE)
+  input <- list(axes = space, 
+                name = paste(x, collapse = ""))
+  output <- list(axes = space, name = "global")
+  meta <- list(
+    list(input = input, 
+         output = output, 
+         type = "identity")
+  )
+  meta
+}
+
+.make_datasets <- function(x, axes){
+  paths <- paste0(seq_len(length(x)) - 1)
+  mapply(\(p) {
+    list(
+      coordinateTransformations = list(
+        list(
+          scale = vapply(axes, \(.){
+            if(. == "c") 1 else (2^as.numeric(p))
+          }, numeric(1)),
+          type = "scale" 
+        )
+      ), 
+      path = p
+    )
+  }, paths, USE.NAMES = FALSE, SIMPLIFY = FALSE)
+}
+
 #' @rdname coord-utils
 #' @export
 setMethod("addCT", "Zattrs", \(x, name, type="identity", data=NULL) {
