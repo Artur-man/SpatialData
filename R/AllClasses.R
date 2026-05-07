@@ -11,7 +11,7 @@ setClassUnion(
 .sdImage <- setClass(
     Class="sdImage",
     contains=c("Annotated"),
-    slots=list(data="list", meta="Zattrs"))
+    slots=list(data="ImageArray", meta="Zattrs"))
 
 .LabelArray <- setClass(
     Class="LabelArray",

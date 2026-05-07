@@ -58,8 +58,14 @@ NULL
 #' @rdname readSpatialData
 #' @export
 readImage <- function(x, ...) {
-    l <- .readArray(x, ...)
-    sdImage(data=l$array, meta=Zattrs(l$md), ...)
+    # l <- .readArray(x, ...)
+    md <- read_zarr_attributes(x)
+    ps <- .get_multiscales_dataset_paths(md)
+    ps <- file.path(x, as.character(ps))
+    mt <- Zattrs(md)
+    as <- ImageArray(levels = lapply(ps, ZarrArray), 
+                     meta = list(axes = vapply(axes(mt), \(.) .$name, character(1))))
+    sdImage(data=as, meta=Zattrs(md), ...)
 }
 
 #' @rdname readSpatialData

@@ -1,0 +1,59 @@
+---
+title: "main"
+output: html_document
+date: "2026-05-07"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction
+
+The `r BiocStyle::Biocpkg("SpatialData")` package provides an R interface to the 
+[SpatialData](https://spatialdata.scverse.org) framework, a unified ecosystem 
+for handling spatial omics data. Developed as part of the 
+[scverse](https://scverse.org) project [@Virshup2023-scverse], `SpatialData` aims to solve the 
+challenges of integrating diverse spatial datasets—including imaging, spatial 
+transcriptomics, and proteomics—by employing the 
+[OME-NGFF (Next Generation File Format)](https://ngff.openmicroscopy.org) 
+standard [@Marconato2025-SpatialData].
+
+The Python implementation and core specifications can be found at the 
+[official SpatialData website](https://spatialdata.scverse.org).
+
+## Data Representation in R
+
+The core of the package is the `SpatialData` class, which serves as a container 
+for multiple layers of spatial information:
+
+- **Images**: Multiscale, multi-channel raster data, represented as `ZarrArray` objects via the `r BiocStyle::Biocpkg("Rarr")` and `r BiocStyle::Biocpkg("ZarrArray")` packages.
+- **Labels**: Segmentation masks (e.g., cell or nuclei boundaries), also stored as `ZarrArray`s.
+- **Points**: High-resolution coordinates (e.g., individual transcript molecules), handled as `r BiocStyle::CRANpkg("arrow")` tables or `r BiocStyle::CRANpkg("duckdb")`-backed data frames for efficient out-of-memory processing.
+- **Shapes**: Polygonal regions of interest or circular markers, represented similarly to points but with geometric metadata.
+- **Tables**: Functional annotations (e.g., gene expression counts), stored as `r BiocStyle::Biocpkg("SingleCellExperiment")` objects.
+
+# Getting Started
+
+First, we load the necessary libraries:
+
+```{r load-libs}
+library(SpatialData)
+library(SingleCellExperiment)
+```
+
+## Reading Data
+
+`SpatialData` objects are typically read from `.zarr` stores. The package provides 
+the `readSpatialData()` function to ingest an entire store. For this demonstration, 
+we use a toy dataset included in the package.
+
+```{r read-data}
+# Path to a toy dataset included in the package
+path <- system.file("extdata", "blobs.zarr", package="SpatialData")
+
+# Read the complete SpatialData object
+# sd <- readSpatialData(path)
+# sd
+tm <- readImage(file.path(path, "images/blobs_image"))
+```

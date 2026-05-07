@@ -95,7 +95,18 @@ setMethod("show", "SpatialData", .showSpatialData)
 }
 
 #' @rdname misc
-setMethod("show", "sdArray", .showsdArray)
+setMethod("show", "LabelArray", .showsdArray)
+
+#' @importFrom S4Vectors coolcat
+.showsdImage <- function(object) {
+  n.object <- length(object@data)
+  cat("class: ", class(object), ifelse(n.object > 1, "(MultiScale)", ""),"\n")
+  scales <- vapply(levels(object@data), \(x) paste0(dim(x), collapse=","), character(1))
+  coolcat("Scales (%d): (%s)", scales)
+}
+
+#' @rdname misc
+setMethod("show", "sdImage", .showsdImage)
 
 #' @importFrom S4Vectors coolcat
 .showPointFrame <- function(object) {
