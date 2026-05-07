@@ -41,20 +41,20 @@
     return(msg)
 }
 
-.validateImageArray <- \(object) {
+.validatesdImage <- \(object) {
     msg <- c()
     res <- length(object)
     for (k in seq_len(res)) {
         x <- data(object, k)
         if (length(dim(x)) != 3) msg <- c(msg, paste(
-            "'ImageArray' resolution", k, "is not 3D"))
+            "'sdImage' resolution", k, "is not 3D"))
         if (!type(x) %in% c("double", "integer")) msg <- c(msg, paste(
-            "'ImageArray' resolution", k, "is not of type double or integer"))
+            "'sdImage' resolution", k, "is not of type double or integer"))
     }
     return(msg)
 }
 #' @importFrom S4Vectors setValidity2
-setValidity2("ImageArray", .validateImageArray)
+setValidity2("sdImage", .validatesdImage)
 
 #' @importFrom ZarrArray type
 .validateLabelArray <- \(object) {
@@ -98,7 +98,7 @@ setValidity2("ShapeFrame", .validateShapeFrame)
 .validateSpatialData <- \(x) {
     msg <- c()
     typ <- c(
-        images="ImageArray",
+        images="sdImage",
         labels="LabelArray",
         points="PointFrame",
         shapes="ShapeFrame",
@@ -108,7 +108,7 @@ setValidity2("ShapeFrame", .validateShapeFrame)
             msg <- c(msg, sprintf("'%s' should be a list of '%s'", ., typ[.]))
     # TODO: validate .zattrs across all layers
     for (y in labels(x)) msg <- c(msg, .validateLabelArray(y))
-    for (y in images(x)) msg <- c(msg, .validateImageArray(y))
+    for (y in images(x)) msg <- c(msg, .validatesdImage(y))
     for (y in points(x)) msg <- c(msg, .validatePointFrame(y))
     for (y in shapes(x)) msg <- c(msg, .validateShapeFrame(y))
     msg <- c(msg, .validateTables(x))

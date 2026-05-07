@@ -21,7 +21,7 @@
 #' @return
 #' \itemize{
 #' \item{For \code{readSpatialData}, a \code{SpatialData}.},
-#' \item{For element readers, a \code{ImageArray}, \code{LabelArray},
+#' \item{For element readers, a \code{sdImage}, \code{LabelArray},
 #' \code{PointFrame}, \code{ShapeFrame}, or \code{SingleCellExperiment}.}}
 #'
 #' @examples
@@ -59,7 +59,7 @@ NULL
 #' @export
 readImage <- function(x, ...) {
     l <- .readArray(x, ...)
-    ImageArray(data=l$array, meta=Zattrs(l$md), ...)
+    sdImage(data=l$array, meta=Zattrs(l$md), ...)
 }
 
 #' @rdname readSpatialData

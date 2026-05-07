@@ -48,7 +48,7 @@ so that pythonic \code{anndata} are used.}
 \value{
 \itemize{
 \item{For \code{readSpatialData}, a \code{SpatialData}.},
-\item{For element readers, a \code{ImageArray}, \code{LabelArray},
+\item{For element readers, a \code{sdImage}, \code{LabelArray},
 \code{PointFrame}, \code{ShapeFrame}, or \code{SingleCellExperiment}.}}
 }
 \description{

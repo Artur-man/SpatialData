@@ -3,7 +3,7 @@
 #' 
 #' @description ...
 #' 
-#' @param images list of \code{\link{ImageArray}}s
+#' @param images list of \code{\link{sdImage}}s
 #' @param labels list of \code{\link{LabelArray}}s
 #' @param points list of \code{\link{PointFrame}}s
 #' @param shapes list of \code{\link{ShapeFrame}}s

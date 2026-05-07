@@ -5,7 +5,7 @@ x <- readSpatialData(x)
 
 fun <- c("image", "label", "shape", "point", "table")
 nms <- c("blobs_image", "blobs_labels", "blobs_circles", "blobs_points", "table")
-typ <- c("ImageArray", "LabelArray", "ShapeFrame", "PointFrame", "SingleCellExperiment")
+typ <- c("sdImage", "LabelArray", "ShapeFrame", "PointFrame", "SingleCellExperiment")
 
 # get ----
 
@@ -69,7 +69,7 @@ test_that("get one", {
 
 test_that("set all", {
     obj <- list(
-        ImageArray(), LabelArray(),
+        sdImage(), LabelArray(),
         ShapeFrame(), PointFrame(),
         SingleCellExperiment())
     names(obj) <- SpatialData:::.LAYERS
@@ -98,7 +98,7 @@ test_that("set one", {
     }
     # value=in/valid
     obj <- list(
-        ImageArray(), LabelArray(),
+        sdImage(), LabelArray(),
         ShapeFrame(), PointFrame(),
         SingleCellExperiment())
     mapply(f=fun, o=obj, t=typ, \(f, o, t) {
@@ -202,7 +202,7 @@ test_that("[,LabelArray", {
     # TODO: multiscales
 })
 
-test_that("[,ImageArray", {
+test_that("[,sdImage", {
     d <- \(x) {
         y <- data(x, NULL)
         vapply(y, dim, numeric(3))

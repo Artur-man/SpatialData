@@ -1,10 +1,10 @@
 #' @name sdArray
-#' @title Methods for `ImageArray` and `LabelArray` class
+#' @title Methods for `sdArray` and `LabelArray` class
 #' 
-#' @param x \code{ImageArray} or  \code{LabelArray}
+#' @param x \code{sdArray} or  \code{LabelArray}
 #' @param k scalar index specifying which scale to extract.
 #' 
-#' @return \code{ImageArray}
+#' @return \code{sdArray}
 #'
 #' @examples
 #' zs <- file.path("extdata", "blobs.zarr")

@@ -97,7 +97,7 @@ setGeneric(".mask", \(i, j, ...) standardGeneric(".mask"))
 #' @importFrom Matrix sparseVector
 #' @importFrom SummarizedExperiment assayNames<-
 #' @importFrom SingleCellExperiment SingleCellExperiment
-setMethod(".mask", c("ImageArray", "LabelArray"), \(i, j, how=NULL, ...) {
+setMethod(".mask", c("sdImage", "LabelArray"), \(i, j, how=NULL, ...) {
     if (is.null(how)) { how <- "mean"; message("Missing 'how'; defaulting to 'mean'") }
     stopifnot(dim(i)[-1] == dim(j))
     .j <- as(data(j), "sparseVector")

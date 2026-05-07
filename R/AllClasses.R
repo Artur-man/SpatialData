@@ -8,8 +8,8 @@ setClassUnion(
     "array_OR_df",
     c("Array", "array", "data.frame"))
 
-.ImageArray <- setClass(
-    Class="ImageArray",
+.sdImage <- setClass(
+    Class="sdImage",
     contains=c("Annotated"),
     slots=list(data="list", meta="Zattrs"))
 
@@ -45,12 +45,12 @@ setClassUnion(
     contains=c("Annotated"),
     slots=list(data="arrow_OR_df", meta="Zattrs"))
 
-setClassUnion("sdArray", c("ImageArray", "LabelArray"))
+setClassUnion("sdArray", c("sdImage", "LabelArray"))
 setClassUnion("sdFrame", c("PointFrame", "ShapeFrame"))
 
 setClassUnion(
     "SpatialDataElement",
-    c("ImageArray", "LabelArray", "PointFrame", "ShapeFrame"))
+    c("sdImage", "LabelArray", "PointFrame", "ShapeFrame"))
 
 #' @rdname SpatialData
 #' @export
@@ -58,7 +58,7 @@ setClassUnion(
     Class="SpatialData",
     contains=c("list", "Annotated"),
     representation(
-        images="list",  # 'ImageArray's
+        images="list",  # 'sdImage's
         labels="list",  # 'LabelArray's
         points="list",  # 'PointFrame's
         shapes="list",  # 'ShapeFrame's

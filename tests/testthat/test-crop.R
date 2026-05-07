@@ -45,7 +45,7 @@ test_that("query,.check_pol", {
     for (. in q) expect_error(SpatialData:::.check_pol(.))
 })
 
-test_that("crop,ImageArray", {
+test_that("crop,sdImage", {
     d <- dim(i <- image(x))
     # polygon query (should use bounding box)
     y <- matrix(c(10, 10, 20, 10, 20, 20, 10, 20), ncol=2, byrow=TRUE)

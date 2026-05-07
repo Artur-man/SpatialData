@@ -5,11 +5,11 @@ zs <- file.path("extdata", "blobs.zarr")
 zs <- system.file(zs, package="SpatialData")
 sd <- readSpatialData(zs)
 
-test_that("validity,ImageArray", {
-    expect_error(ImageArray(list(v <- character(1))))
+test_that("validity,sdImage", {
+    expect_error(sdImage(list(v <- character(1))))
     x <- image(sd,1); x@data[[1]][1,1,1] <- v; expect_error(validObject(x))
     x <- image(sd,2); x@data[[2]][1,1,1] <- v; expect_error(validObject(x))
-    expect_error(ImageArray(list(a <- array(numeric(1), c(1,1)))))
+    expect_error(sdImage(list(a <- array(numeric(1), c(1,1)))))
     x <- image(sd,1); x@data[[1]] <- a; expect_error(validObject(x))
     x <- image(sd,2); x@data[[2]] <- a; expect_error(validObject(x))
 })

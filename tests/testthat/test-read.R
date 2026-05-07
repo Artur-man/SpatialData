@@ -3,7 +3,7 @@ x <- system.file(x, package="SpatialData")
 
 test_that("readElement()", {
     typ <- c(
-        images="ImageArray", 
+        images="sdImage", 
         labels="LabelArray", 
         points="PointFrame",
         shapes="ShapeFrame", 

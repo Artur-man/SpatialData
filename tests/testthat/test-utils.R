@@ -67,7 +67,7 @@ test_that("centroids,ShapeFrame", {
 
 # extent ----
 
-test_that("extent,ImageArray", {
+test_that("extent,sdImage", {
     z <- extent(y <- image(x)[,-1,-c(1,2)])
     expect_is(z, "list")
     expect_is(unlist(z), "numeric")

@@ -12,7 +12,7 @@ test_that("mask,unsupported", {
     for (ij in nm) expect_error(mask(x, ij[1], ij[2]))
 })
 
-test_that("mask,ImageArray,LabelArray", {
+test_that("mask,sdImage,LabelArray", {
     i <- "blobs_image"
     j <- "blobs_labels"
     # reproduce example data

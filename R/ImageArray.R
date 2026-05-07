@@ -1,8 +1,8 @@
-#' @name ImageArray
-#' @title The `ImageArray` class
+#' @name sdImage
+#' @title The `sdImage` class
 #' @aliases channels
 #' 
-#' @param x \code{ImageArray}
+#' @param x \code{sdImage}
 #' @param data list of \code{\link[ZarrArray]{ZarrArray}}s
 #' @param meta \code{\link{Zattrs}}
 #' @param metadata optional list of arbitrary 
@@ -12,7 +12,7 @@
 #' @param drop ignored.
 #' @param ... option arguments passed to and from other methods.
 #'
-#' @return \code{ImageArray}
+#' @return \code{sdImage}
 #'
 #' @examples
 #' zs <- file.path("extdata", "blobs.zarr")
@@ -41,18 +41,18 @@
 #' @importFrom S4Vectors metadata<-
 #' @importFrom methods new
 #' @export
-ImageArray <- function(data=list(), meta=Zattrs(), metadata=list(), ...) {
-    x <- .ImageArray(data=data, meta=meta, ...)
+sdImage <- function(data=list(), meta=Zattrs(), metadata=list(), ...) {
+    x <- .sdImage(data=data, meta=meta, ...)
     metadata(x) <- metadata
     return(x)
 }
 
 #' @export
-#' @rdname ImageArray
-setMethod("channels", "ImageArray", \(x, ...) channels(meta(x)))
+#' @rdname sdImage
+setMethod("channels", "sdImage", \(x, ...) channels(meta(x)))
 
 #' @export
-#' @rdname ImageArray
+#' @rdname sdImage
 setMethod("channels", "ANY", \(x, ...) stop("only 'images' have channels"))
 
 #' @importFrom S4Vectors isSequence
@@ -66,7 +66,7 @@ setMethod("channels", "ANY", \(x, ...) stop("only 'images' have channels"))
     if (length(ps)) {
         qs <- seq(min(ps), max(ps))
         if (!isTRUE(all.equal(ps, qs)))
-            stop("ImageArray paths are ill-defined, should",
+            stop("sdImage paths are ill-defined, should",
                 " be an integer sequence, e.g., 0,1,...,n")
     }
     return(ps)
@@ -82,13 +82,13 @@ setMethod("channels", "ANY", \(x, ...) stop("only 'images' have channels"))
             # validate 'paths'
             ok <- vapply(ds, \(.) !is.null(.$path), logical(1))
             if (!all(ok))
-                stop("'ImageArray' paths are ill-defined,",
+                stop("'sdImage' paths are ill-defined,",
                     " no 'path' attribute under 'multiscale-datasets'")
         } else stop(
-            "'ImageArray' paths are ill-defined,",
+            "'sdImage' paths are ill-defined,",
             " no 'datasets' attribute under 'multiscale'")
     } else stop( 
-        "'ImageArray' paths are ill-defined,",
+        "'sdImage' paths are ill-defined,",
         " no 'multiscales' attribute under '.zattrs'")
     return(ms)
 }
@@ -106,9 +106,9 @@ setMethod("channels", "ANY", \(x, ...) stop("only 'images' have channels"))
 }
 
 #' @exportMethod [
-#' @rdname ImageArray
+#' @rdname sdImage
 #' @importFrom utils head tail
-setMethod("[", "ImageArray", \(x, i, j, k, ..., drop=FALSE) {
+setMethod("[", "sdImage", \(x, i, j, k, ..., drop=FALSE) {
     if (missing(i)) i <- TRUE
     if (missing(j)) j <- TRUE else if (isFALSE(j)) j <- 0 else .check_jk(j, "j")
     if (missing(k)) k <- TRUE else if (isFALSE(k)) k <- 0 else .check_jk(k, "k")

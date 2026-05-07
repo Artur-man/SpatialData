@@ -258,7 +258,7 @@ for (. in all) eval(f(.), parent.env(environment()))
 # set one ----
 
 typ <- c(
-    image="ImageArray", label="LabelArray", 
+    image="sdImage", label="LabelArray", 
     point="PointFrame", shape="ShapeFrame", 
     table="SingleCellExperiment")
 

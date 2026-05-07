@@ -7,7 +7,7 @@
 \alias{length,sdArray-method}
 \alias{data_type,sdArray-method}
 \alias{data_type,DelayedArray-method}
-\title{Methods for `ImageArray` and `LabelArray` class}
+\title{Methods for `sdArray` and `LabelArray` class}
 \usage{
 \S4method{data}{sdArray}(x, k = 1)
 
@@ -20,15 +20,15 @@
 \S4method{data_type}{DelayedArray}(x)
 }
 \arguments{
-\item{x}{\code{ImageArray} or  \code{LabelArray}}
+\item{x}{\code{sdArray} or  \code{LabelArray}}
 
 \item{k}{scalar index specifying which scale to extract.}
 }
 \value{
-\code{ImageArray}
+\code{sdArray}
 }
 \description{
-Methods for `ImageArray` and `LabelArray` class
+Methods for `sdArray` and `LabelArray` class
 }
 \examples{
 zs <- file.path("extdata", "blobs.zarr")
