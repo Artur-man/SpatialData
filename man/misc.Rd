@@ -3,14 +3,17 @@
 \name{misc}
 \alias{misc}
 \alias{show,SpatialData-method}
-\alias{show,sdArray-method}
+\alias{show,LabelArray-method}
+\alias{show,sdImage-method}
 \alias{show,PointFrame-method}
 \alias{show,ShapeFrame-method}
 \title{Miscellaneous `SpatialData` methods}
 \usage{
 \S4method{show}{SpatialData}(object)
 
-\S4method{show}{sdArray}(object)
+\S4method{show}{LabelArray}(object)
+
+\S4method{show}{sdImage}(object)
 
 \S4method{show}{PointFrame}(object)
 

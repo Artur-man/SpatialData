@@ -55,5 +55,7 @@ path <- system.file("extdata", "blobs.zarr", package="SpatialData")
 # Read the complete SpatialData object
 # sd <- readSpatialData(path)
 # sd
-tm <- readImage(file.path(path, "images/blobs_image"))
+tm <- SpatialData::readImage(file.path(path, "images/blobs_image"))
+tm
+data(tm)
 ```

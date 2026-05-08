@@ -71,7 +71,8 @@ Imports:
     SingleCellExperiment,
     SummarizedExperiment,
     SparseArray,
-    ZarrArray
+    ZarrArray,
+    ImageArray
 Suggests:
     BiocStyle,
     knitr,
@@ -87,8 +88,6 @@ biocViews:
     Transcriptomics, 
     SingleCell,
     Spatial
-Remotes:
-    BIMSBbioinfo/ImageArray
 License: Artistic-2.0
 Encoding: UTF-8
 VignetteBuilder: knitr

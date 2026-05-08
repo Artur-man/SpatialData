@@ -56,6 +56,7 @@ NULL
 }
 
 #' @rdname readSpatialData
+#' @importFrom ImageArray ImageArray
 #' @export
 readImage <- function(x, ...) {
     # l <- .readArray(x, ...)
