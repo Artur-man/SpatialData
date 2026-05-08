@@ -64,7 +64,10 @@ readImage <- function(x, ...) {
     ps <- .get_multiscales_dataset_paths(md)
     ps <- file.path(x, as.character(ps))
     mt <- Zattrs(md)
-    as <- ImageArray(levels = lapply(ps, ZarrArray), 
+    # sdImage(data=as, 
+    #         meta=list(axes = vapply(axes(mt), \(.) .$name, character(1))), 
+    #         ...)
+    as <- ImageArray(levels = lapply(ps, ZarrArray),
                      meta = list(axes = vapply(axes(mt), \(.) .$name, character(1))))
     sdImage(data=as, meta=Zattrs(md), ...)
 }
