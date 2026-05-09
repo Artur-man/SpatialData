@@ -141,7 +141,8 @@ writeShape <- function(x, name, path, replace = TRUE,
   duckspatial::ddbs_write_dataset(
     data(x),
     file.path(zarr.group, "shapes.parquet"),
-    overwrite = TRUE
+    overwrite = TRUE,
+    quiet = TRUE
   )}
 
 #' @rdname writeSpatialData
