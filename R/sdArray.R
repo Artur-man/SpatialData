@@ -127,15 +127,15 @@ SpatialDataLabel <- function(data=list(),
 #' @rdname SpatialDataArray
 #' @export
 setMethod("data", "SpatialDataArray", \(x, k=1) {
-  # direct accession needed here
-  # to get at available scales
-  x <- x@data 
-  if (is.null(k)) return(x)
-  stopifnot(length(k) == 1, is.numeric(k), k > 0)
-  n <- length(x) # get number of available scales
-  if (is.infinite(k)) k <- n # input of Inf uses lowest
-  if (k <= n) return(x[[k]]) # return specified scale
-  stop("'k=", k, "' but only ", n, " resolution(s) available")
+    # direct accession needed here
+    # to get at available scales
+    x <- x@data 
+    if (is.null(k)) return(x)
+    stopifnot(length(k) == 1, is.numeric(k), k > 0)
+    n <- length(x) # get number of available scales
+    if (is.infinite(k)) k <- n # input of Inf uses lowest
+    if (k <= n) return(x[[k]]) # return specified scale
+    stop("'k=", k, "' but only ", n, " resolution(s) available")
 })
 
 #' @rdname SpatialDataArray
@@ -150,8 +150,8 @@ setMethod("length", "SpatialDataArray", \(x) length(data(x, NULL)))
 #' @rdname SpatialDataArray
 #' @importFrom S4Vectors metadata
 setMethod("data_type", "SpatialDataArray", \(x) {
-  if (is(y <- data(x), "DelayedArray")) 
-    data_type(y) else metadata(x)$data_type
+    if (is(y <- data(x), "DelayedArray")) 
+      data_type(y) else metadata(x)$data_type
 })
 
 #' @export
@@ -160,8 +160,8 @@ setMethod("data_type", "SpatialDataArray", \(x) {
 #' @importFrom Rarr zarr_overview
 #' @importFrom ZarrArray path
 setMethod("data_type", "DelayedArray", \(x) {
-  df <- zarr_overview(path(x), as_data_frame=TRUE)
-  return(df$data_type)
+    df <- zarr_overview(path(x), as_data_frame=TRUE)
+    return(df$data_type)
 })
 
 #' @importFrom S4Vectors isSequence
