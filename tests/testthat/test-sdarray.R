@@ -62,7 +62,7 @@ test_that("create, SpatialDataImage", {
   
   # make image array
   imgarray <- SpatialDataImage(img)
-  expect_identical(realize(data(imgarray)), img)
+  expect_identical(data(imgarray), img)
   expect_identical(dim(imgarray),dim(img))
   
   # coordinate systems
@@ -88,7 +88,7 @@ test_that("create multiscale, SpatialDataImage", {
   
   # make image array
   imgarray <- SpatialDataImage(img, scale_factors = c(2,2,2))
-  expect_identical(realize(data(imgarray)), img)
+  expect_identical(data(imgarray), img)
   expect_identical(dim(imgarray),dim(img))
   
   # coordinate systems
@@ -216,7 +216,7 @@ test_that("create,SpatialDataLabel", {
   
   # make label array
   lblarray <- SpatialDataLabel(lbl)
-  expect_identical(realize(data(lblarray)), lbl)
+  expect_identical(data(lblarray), lbl)
   expect_identical(dim(lblarray),dim(lbl))
   
   # coordinate systems
@@ -242,7 +242,7 @@ test_that("create multiscale,SpatialDataLabel", {
   
   # make label array
   lblarray <- SpatialDataLabel(lbl, scale_factors = c(2,2,2))
-  expect_identical(realize(data(lblarray)), lbl)
+  expect_identical(data(lblarray), lbl)
   expect_identical(dim(lblarray),dim(lbl))
   
   # coordinate systems

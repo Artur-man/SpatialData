@@ -211,7 +211,7 @@ setMethod("data_type", "DelayedArray", \(x) {
   # downscale image
   image_list <- list(image)
   cur_image <- aperm(image, 
-                     perm = rev(seq_len(length(axes))))
+                     perm = rev(seq_along(axes)))
   for (i in seq_along(scale_factors)) {
     dim_image <- ceiling(dim_image / scale_factors[i])
     image_list[[i+1]] <- 
@@ -221,7 +221,7 @@ setMethod("data_type", "DelayedArray", \(x) {
                             filter = switch(method, 
                                             image = "bilinear",
                                             label = "none")), 
-            perm = rev(seq_len(length(axes))))
+            perm = rev(seq_along(axes)))
   }
   if (method == "label") {
     image_list <- lapply(image_list, function(x) {

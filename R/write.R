@@ -165,7 +165,7 @@ writeImage <- function(x, name, path, replace = TRUE,
   # write data
   dimension_names <- vapply(axes(meta(x)), \(.) .$name, character(1))
   lapply(
-    .get_multiscales_dataset_paths(meta(x)),
+    as.numeric(datasets(meta(x))),
     \(.){
       arr <- realize(data(x, . + 1))
       # Rarr reads names(dimnames(x)) to write dimension_names in v3 zarr.json
@@ -193,9 +193,6 @@ writeLabel <- function(x, name, path, replace = TRUE,
                                  replace,
                                  version = zarr_version(format))
   
-  # dimension_names <- .get_multiscale_axes(meta(x))
-  dimension_names <- vapply(axes(meta(x)), \(.) .$name, character(1))
-  
   # write meta:
   Rarr::write_zarr_attributes(zarr.group, new.zattrs = meta(x))
   
@@ -203,8 +200,9 @@ writeLabel <- function(x, name, path, replace = TRUE,
   version(x) <- label(format)
   
   # write data
+  dimension_names <- vapply(axes(meta(x)), \(.) .$name, character(1))
   lapply(
-    .get_multiscales_dataset_paths(meta(x)),
+    as.numeric(datasets(meta(x))),
     \(.){
       arr <- realize(data(x, . + 1))
       if (!is.null(dimension_names))
