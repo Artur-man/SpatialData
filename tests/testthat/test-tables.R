@@ -4,14 +4,43 @@ x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="SpatialData")
 x <- readSpatialData(x)
 
-se <- SpatialData::table(x)
-md <- int_metadata(se)
+t <- table(x)
+md <- int_metadata(t)
 md <- md$spatialdata_attrs
 i <- md[[rk <- md$region_key]]
 
+test_that("table<-", {
+    # labels aren't affected
+    y <- x
+    i <- region(t)
+    table(y) <- t[, -1]
+    expect_identical(element(x, i), element(y, i))
+    # shapes are synchronized
+    i <- shapeNames(x)[1]
+    y <- shape(x, i)
+    m <- 77; n <- length(y)
+    u <- matrix(m*n, m, n)
+    u <- SingleCellExperiment(u)
+    a <- setTable(x, i, u, name="x")
+    v <- element(a, "x")[-33, -3]
+    f <- \(a, b) {
+        a <- element(a, "x")
+        b <- element(b, "x")
+        expect_equal(dim(a), c(m,n))
+        expect_equal(dim(b), c(m-1,n-1))
+        expect_identical(instances(a), instances(y))
+        expect_identical(instances(b), instances(y)[-3])
+    }
+    b <- a; b$tables$x <- v; f(a, b)
+    b <- a; table(b, "x") <- v; f(a, b)
+    b <- a; b$tables <- list(x=v); f(a, b)
+    b <- a; tables(b) <- list(x=v); f(a, b)
+    b <- a; table(b, grep("x", tableNames(b))) <- v; f(a, b)
+})
+
 test_that("hasTable()", {
     # TRUE
-    i <- region(SpatialData::table(x))
+    i <- region(table(x))
     expect_true(hasTable(x, i))
     # FALSE
     j <- setdiff(unlist(colnames(x)), c(i, tableNames(x)))
@@ -36,7 +65,7 @@ test_that("getTable()", {
     expect_error(getTable(x, character(2)))
     # valid
     expect_silent(t <- getTable(x, i))
-    expect_identical(t, SpatialData::table(x))
+    expect_identical(t, table(x))
     # 'drop' argument
     expect_error(getTable(x, i, 123))
     expect_error(getTable(x, i, "."))
@@ -45,7 +74,7 @@ test_that("getTable()", {
     s <- t; y <- x
     int_colData(s)[[rk]] <- paste(int_colData(s)[[rk]])
     int_colData(s)[[rk]][. <- sample(ncol(s), 2)] <- "."
-    SpatialData::table(y) <- s
+    table(y) <- s
     # these should be gone when 'drop=TRUE'
     t1 <- getTable(y, i, drop=FALSE)
     t2 <- getTable(y, i, drop=TRUE)
@@ -63,7 +92,7 @@ test_that("valTable()", {
     # 'colData'
     cd <- DataFrame(a=sample(letters, n), b=runif(n))
     s <- t; colData(s) <- cd
-    y <- x; SpatialData::table(y) <- s
+    y <- x; table(y) <- s
     expect_identical(getTable(y, i, j <- "a"), s[[j]])
     expect_identical(getTable(y, i, j <- "b"), s[[j]])
     expect_error(getTable(y, i, "c"))
@@ -72,7 +101,7 @@ test_that("valTable()", {
     v <- getTable(x, i, j)
     expect_identical(v, assay(t)[j, ])
     # 'assay' argument
-    assay(t, ".") <- 1+assay(t); SpatialData::table(x) <- t
+    assay(t, ".") <- 1+assay(t); table(x) <- t
     v <- getTable(x, i, j, assay=".")
     expect_identical(v, assay(t, ".")[j, ])
     expect_error(getTable(x, i, rownames(t)[1], assay=".."))
@@ -150,7 +179,7 @@ test_that("setTable() handles custom name and keys", {
     sd_new <- setTable(x, i, sce, name="my_custom_table", rk="my_rk", ik="my_ik")
     
     expect_true("my_custom_table" %in% tableNames(sd_new))
-    t <- SpatialData::table(sd_new, "my_custom_table")
+    t <- table(sd_new, "my_custom_table")
     expect_equal(region_key(t), "my_rk")
     expect_equal(instance_key(t), "my_ik")
 })

@@ -9,11 +9,12 @@
 \alias{meta}
 \alias{layer}
 \alias{element}
+\alias{element<-}
 \alias{image}
 \alias{label}
 \alias{point}
 \alias{shape}
-\alias{table}
+\alias{table,ANY-method}
 \alias{images}
 \alias{labels}
 \alias{points}
@@ -42,9 +43,10 @@
 \alias{[[<-,SpatialData,character,ANY-method}
 \alias{[[<-,SpatialData,numeric,ANY-method}
 \alias{$,SpatialData-method}
+\alias{$<-,SpatialData-method}
 \alias{[[,SpatialData,numeric,ANY-method}
 \alias{[[,SpatialData,character,ANY-method}
-\alias{data,SpatialDataElement-method}
+\alias{data,ANY-method}
 \alias{meta,SpatialDataElement-method}
 \alias{[,SpatialData,ANY,ANY,ANY-method}
 \alias{rownames,SpatialData-method}
@@ -55,6 +57,7 @@
 \alias{element,SpatialData,numeric-method}
 \alias{element,SpatialData,missing-method}
 \alias{element,SpatialData,ANY-method}
+\alias{element<-,SpatialData,character-method}
 \alias{images,SpatialData-method}
 \alias{labels,SpatialData-method}
 \alias{points,SpatialData-method}
@@ -66,11 +69,13 @@ SpatialData(images, labels, points, shapes, tables)
 
 \S4method{$}{SpatialData}(x, name)
 
+\S4method{$}{SpatialData}(x, name) <- value
+
 \S4method{[[}{SpatialData,numeric,ANY}(x, i, j, ...)
 
 \S4method{[[}{SpatialData,character,ANY}(x, i, j, ...)
 
-\S4method{data}{SpatialDataElement}(x)
+\S4method{data}{ANY}(...)
 
 \S4method{meta}{SpatialDataElement}(x)
 
@@ -92,6 +97,8 @@ SpatialData(images, labels, points, shapes, tables)
 
 \S4method{element}{SpatialData,ANY}(x, i)
 
+\S4method{element}{SpatialData,character}(x, i) <- value
+
 \S4method{images}{SpatialData}(x)
 
 \S4method{labels}{SpatialData}(x)
@@ -101,6 +108,8 @@ SpatialData(images, labels, points, shapes, tables)
 \S4method{shapes}{SpatialData}(x)
 
 \S4method{tables}{SpatialData}(x)
+
+\S4method{table}{ANY}(...)
 
 \S4method{[[}{SpatialData,numeric,ANY}(x, i) <- value
 
@@ -121,15 +130,17 @@ SpatialData(images, labels, points, shapes, tables)
 
 \item{name}{character string for extraction (see \code{?base::`$`}).}
 
+\item{value}{(list of) element(s) with layer-compliant object(s), 
+or NULL/\code{list()} to remove an element/layer completely; 
+for \code{element<-}, a single \code{SpatialDataElement}
+of the same class as \code{element(x, i)}.}
+
 \item{i, j}{character string, scalar or vector of indices
 specifying the element to extract from a given layer.}
 
 \item{...}{optional arguments passed to and from other methods.}
 
 \item{drop}{ignored.}
-
-\item{value}{(list of) element(s) with layer-compliant object(s), 
-or NULL/\code{list()} to remove an element/layer completely.}
 }
 \value{
 \code{SpatialData}

@@ -41,6 +41,16 @@ test_that("element()", {
     })
 })
 
+test_that("element<-()", {
+    i <- vapply(colnames(x), \(.) .[1], character(1))
+    for (. in i) {
+        y <- x; element(y, .) <- element(x, .)
+        expect_identical(element(y, .), element(x, .))
+        y <- x; element(y, .) <- NULL
+        expect_error(element(y, .))
+    }
+})
+
 test_that("get all", {
     for (f in paste0(fun, "s"))
         expect_is(get(f)(x), "list")
@@ -134,9 +144,9 @@ test_that("set nms", {
     y <- x; val <- letters[seq_along(images(x))]
     expect_silent(imageNames(y) <- val)
     expect_identical(imageNames(y), val)
-    r <- region(SpatialData::table(x))
+    r <- region(table(x))
     y <- x; labelNames(y) <- "x"
-    r <- region(SpatialData::table(y))
+    r <- region(table(y))
     expect_identical(r, "x")
 })
 
