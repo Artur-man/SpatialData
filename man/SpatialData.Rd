@@ -109,7 +109,7 @@ SpatialData(images, labels, points, shapes, tables)
 
 \S4method{tables}{SpatialData}(x)
 
-\S4method{table}{ANY}(...)
+\S4method{table}{ANY}(x, ...)
 
 \S4method{[[}{SpatialData,numeric,ANY}(x, i) <- value
 
