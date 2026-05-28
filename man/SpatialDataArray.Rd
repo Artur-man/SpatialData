@@ -45,7 +45,7 @@ SpatialDataLabel(
 
 \S4method{channels}{SpatialDataElement}(x, ...)
 
-\S4method{[}{SpatialDataImage,ANY,ANY,ANY}(x, i, j, k, ..., drop = FALSE)
+\S4method{[}{SpatialDataImage,ANY,ANY,ANY}(x, i = NULL, j, k, ..., drop = FALSE)
 
 \S4method{[}{SpatialDataLabel,ANY,ANY,ANY}(x, i, j, ..., drop = FALSE)
 }

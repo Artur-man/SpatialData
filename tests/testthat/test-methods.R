@@ -5,11 +5,7 @@ x <- readSpatialData(x)
 
 fun <- c("image", "label", "shape", "point", "table")
 nms <- c("blobs_image", "blobs_labels", "blobs_circles", "blobs_points", "table")
-<<<<<<< HEAD
-typ <- c("sdImage", "LabelArray", "ShapeFrame", "PointFrame", "SingleCellExperiment")
-=======
 typ <- c("SpatialDataImage", "SpatialDataLabel", "SpatialDataShape", "SpatialDataPoint", "SingleCellExperiment")
->>>>>>> main
 
 # get ----
 
@@ -89,16 +85,7 @@ obj <- list(
     tables=SingleCellExperiment())
 
 test_that("set all", {
-<<<<<<< HEAD
-    obj <- list(
-        sdImage(), LabelArray(),
-        ShapeFrame(), PointFrame(),
-        SingleCellExperiment())
-    names(obj) <- SpatialData:::.LAYERS
-    for (. in SpatialData:::.LAYERS) {
-=======
     for (. in .LAYERS) {
->>>>>>> main
         y <- x; y[[.]] <- list()
         expect_length(y[[.]], 0)
         # character
@@ -122,13 +109,6 @@ test_that("set one", {
         expect_true(m == (n-1))
     }
     # value=in/valid
-<<<<<<< HEAD
-    obj <- list(
-        sdImage(), LabelArray(),
-        ShapeFrame(), PointFrame(),
-        SingleCellExperiment())
-=======
->>>>>>> main
     mapply(f=fun, o=obj, t=typ, \(f, o, t) {
         set <- get(paste0(f, "<-"))
         nms <- get(paste0(f, "Names"))
