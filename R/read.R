@@ -73,11 +73,27 @@ readImage <- function(x, ...) {
     # SpatialDataImage(data=l$array, meta=l$mdattr, ...)
 }
 
+#' #' @rdname readSpatialData
+#' #' @export
+#' readLabel <- function(x, ...) {
+#'     l <- .readArray(x, ...)
+#'     SpatialDataLabel(data=l$array, meta=l$mdattr, ...)
+#' }
+
 #' @rdname readSpatialData
+#' @importFrom ImageArray ImageArray
 #' @export
 readLabel <- function(x, ...) {
-    l <- .readArray(x, ...)
-    SpatialDataLabel(data=l$array, meta=l$mdattr, ...)
+  # l <- .readArray(x, ...)
+  md <- read_zarr_attributes(x)
+  mdattr <- SpatialDataAttrs(md)
+  ds <- .validate_multiscales_paths(x, datasets(mdattr))
+  ds <- file.path(x, as.character(ds))
+  as <- ImageArray(levels = lapply(ds, ZarrArray),
+                   meta = list(axes = vapply(axes(mdattr), \(.) .$name, character(1))))
+  SpatialDataLabel(data=as, meta=mdattr, ...)
+  # l <- .readArray(x, ...)
+  # SpatialDataImage(data=l$array, meta=l$mdattr, ...)
 }
 
 #' @rdname readSpatialData

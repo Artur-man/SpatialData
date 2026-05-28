@@ -49,6 +49,13 @@ or \code{SingleCellExperiment}.}}
 }
 \description{
 Reading `SpatialData`
+
+#' @rdname readSpatialData
+#' @export
+readLabel <- function(x, ...) {
+    l <- .readArray(x, ...)
+    SpatialDataLabel(data=l$array, meta=l$mdattr, ...)
+}
 }
 \examples{
 zs <- file.path("extdata", "blobs.zarr")
