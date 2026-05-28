@@ -85,7 +85,8 @@ setMethod("sequence", c("SpatialDataElement", "list"), \(x, t, ..., rev=FALSE) {
 .mirror <- \(x, t, k=1) {
     d <- length(dim(x)) == 3
     i <- if (d) c(1, 3, 2) else c(2, 1)
-    data(x) <- list(aperm(data(x, k), i))
+    # data(x) <- list(aperm(data(x, k), i))
+    data(x) <- ImageArray::aperm(data(x, NULL), perm = i)
     rotate(x, t, k=1)
 }
 
@@ -96,11 +97,13 @@ setMethod("mirror", "SpatialDataArray", \(x, t=c("v", "h"), k=1, ...)
 
 #' @export
 #' @rdname trans
-setMethod("flip", "SpatialDataArray", \(x, k=1, ...) .mirror(x, -90, k))
+setMethod("flip", "SpatialDataArray", \(x, ...) .mirror(x, 270))
+# TODO: allow -90 as angle in ImageArray
+# setMethod("flip", "SpatialDataArray", \(x, ...) .mirror(x, -90))
 
 #' @export
 #' @rdname trans
-setMethod("flop", "SpatialDataArray", \(x, k=1, ...) .mirror(x, 90, k))
+setMethod("flop", "SpatialDataArray", \(x, ...) .mirror(x, 90))
 
 # rotation matrix to rotate points counter-clockwise through an angle 't'
 .R <- \(t) matrix(c(cos(t), -sin(t), sin(t), cos(t)), 2, 2)
@@ -110,17 +113,12 @@ setMethod("flop", "SpatialDataArray", \(x, k=1, ...) .mirror(x, 90, k))
 #' @importFrom methods as
 #' @importFrom EBImage rotate
 #' @importFrom S4Vectors metadata<-
-setMethod("rotate", c("SpatialDataArray", "numeric"), \(x, t, k=1, ..., rev=FALSE) {
-    # negate angle since 'EBImage' rotates clockwise
+setMethod("rotate", c("SpatialDataArray", "numeric"), \(x, t, ..., rev=FALSE) {
+    # complement angle with 360 to turn counterclockwise
     stopifnot(length(t) == 1, is.finite(t))
     if (t %% 360 == 0) return(x)
-    if (rev) t <- -t
-    if (length(d <- dim(data(x, k))) == 3) d <- d[-1]
-    metadata(x)$wh <- lapply(rev(d), \(.) c(c(0, .) %*% .R(t*pi/180)))
-    f <- \(.) EBImage::rotate(., -t) 
-    a <- f(aperm(as.array(data(x, k))))
-    metadata(x)$data_type <- data_type(x)
-    data(x) <- list(as(aperm(a), "SparseArray"))
+    if (rev) t <- 360-t
+    data(x) <- ImageArray::rotate(data(x, NULL), t)
     return(x)
 })
 

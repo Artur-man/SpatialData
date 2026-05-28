@@ -173,6 +173,8 @@ setMethod("channels", "SpatialDataElement", \(x, ...) stop("only 'images' have c
 #' @importFrom utils head tail
 setMethod("[", "SpatialDataImage", \(x, i, j, k, ..., drop=FALSE) {
     if (missing(i)) i <- seq_len(dim(x)[1])
+    if (missing(j)) j <- TRUE else if (isFALSE(j)) j <- 0 else .check_jk(j, "j")
+    if (missing(k)) k <- TRUE else if (isFALSE(k)) k <- 0 else .check_jk(k, "k")
     data(x) <- data(x, NULL)[i,j,k]
     x
 })
@@ -181,6 +183,8 @@ setMethod("[", "SpatialDataImage", \(x, i, j, k, ..., drop=FALSE) {
 #' @rdname SpatialDataArray
 #' @importFrom utils head tail
 setMethod("[", "SpatialDataLabel", \(x, i, j, ..., drop=FALSE) {
+    if (missing(i)) i <- TRUE else if (isFALSE(i)) i <- 0 else .check_jk(i, "i")
+    if (missing(j)) j <- TRUE else if (isFALSE(j)) j <- 0 else .check_jk(j, "j")
     data(x) <- data(x, NULL)[i,j]
     x
 })
