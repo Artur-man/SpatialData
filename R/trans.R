@@ -153,11 +153,22 @@ setMethod("scale",
     c("SpatialDataArray", "numeric"), 
     \(x, t, ...) .trans_a(x, t, "scale", ...))
 
+.trans_a_trans <- \(x, t, rev=FALSE) {
+
+  # validation & identity check
+  stopifnot(is.numeric(t), is.finite(t), length(t) == 2)
+  if (all(t == 0)) return(x)
+
+  # translate, ImageArray axes order for translation is x,y
+  data(x) <- ImageArray::translation(data(x, NULL), shift = rev(t))
+  x
+}
+  
 #' @export
 #' @rdname trans
 setMethod("translation", 
     c("SpatialDataArray", "numeric"), 
-    \(x, t, ...) .trans_a(x, t, "translation", ...))
+    \(x, t, ...) .trans_a_trans(x, t, ...))
 
 # point/shape ----
 
