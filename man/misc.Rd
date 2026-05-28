@@ -3,25 +3,22 @@
 \name{misc}
 \alias{misc}
 \alias{show,SpatialData-method}
-\alias{show,LabelArray-method}
-\alias{show,sdImage-method}
-\alias{show,PointFrame-method}
-\alias{show,ShapeFrame-method}
+\alias{show,SpatialDataArray-method}
+\alias{show,SpatialDataPoint-method}
+\alias{show,SpatialDataShape-method}
 \title{Miscellaneous `SpatialData` methods}
 \usage{
 \S4method{show}{SpatialData}(object)
 
-\S4method{show}{LabelArray}(object)
+\S4method{show}{SpatialDataArray}(object)
 
-\S4method{show}{sdImage}(object)
+\S4method{show}{SpatialDataPoint}(object)
 
-\S4method{show}{PointFrame}(object)
-
-\S4method{show}{ShapeFrame}(object)
+\S4method{show}{SpatialDataShape}(object)
 }
 \arguments{
 \item{object}{\code{\link{SpatialData}} object or one of its elements,
-i.e., an \code{Image/LabelArray} or \code{Point/ShapeFrame}.}
+i.e., a \code{SpatialDataImage/Label/Point/Shape}.}
 }
 \value{
 \code{NULL}
@@ -32,7 +29,7 @@ Miscellaneous methods (e.g., \code{show}) for the
 }
 \examples{
 zs <- file.path("extdata", "blobs.zarr")
-zs <- system.file(zs, package="SpatialData")
+zs <- system.file(zs, package="spatialdataR")
 (sd <- readSpatialData(zs))
 
 # show element

@@ -8,7 +8,7 @@
 #'
 #' @examples
 #' x <- file.path("extdata", "blobs.zarr")
-#' x <- system.file(x, package="SpatialData")
+#' x <- system.file(x, package="spatialdataR")
 #' x <- readSpatialData(x, tables=FALSE)
 #'
 #' # object-wide
@@ -35,21 +35,22 @@ setMethod("extent", "SpatialData", \(x, i=1) {
 
 #' @export
 #' @rdname extent
-setMethod("extent", "sdArray", \(x, i=1) {
+setMethod("extent", "SpatialDataArray", \(x, i=1) {
     x <- transform(x, i)
-    wh <- metadata(x)$wh
-    if (!is.null(wh)) return(wh)
-    n <- length(d <- dim(x))
-    if (n == 3) d <- d[-1]
-    d <- rev(d)
-    names(d) <- c("x", "y")
-    lapply(d, \(.) c(0, .))
+    wh <- metadata(x)$wh %||% {
+        n <- length(d <- dim(x))
+        if (n == 3) d <- d[-1]
+        d <- rev(d)
+        lapply(d, \(.) c(0, .))
+    }
+    names(wh) <- c("x", "y")
+    return(wh)
 })
 
 #' @export
 #' @rdname extent
 #' @importFrom duckspatial ddbs_bbox
-setMethod("extent", "sdFrame", \(x, i=1) {
+setMethod("extent", "SpatialDataFrame", \(x, i=1) {
     x <- transform(x, i)
     v <- ddbs_bbox(data(x))
     l <- list(

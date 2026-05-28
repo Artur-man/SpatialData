@@ -1,11 +1,15 @@
 library(SingleCellExperiment)
 x <- file.path("extdata", "blobs.zarr")
-x <- system.file(x, package="SpatialData")
+x <- system.file(x, package="spatialdataR")
 x <- readSpatialData(x)
 
 fun <- c("image", "label", "shape", "point", "table")
 nms <- c("blobs_image", "blobs_labels", "blobs_circles", "blobs_points", "table")
+<<<<<<< HEAD
 typ <- c("sdImage", "LabelArray", "ShapeFrame", "PointFrame", "SingleCellExperiment")
+=======
+typ <- c("SpatialDataImage", "SpatialDataLabel", "SpatialDataShape", "SpatialDataPoint", "SingleCellExperiment")
+>>>>>>> main
 
 # get ----
 
@@ -35,10 +39,20 @@ test_that("element()", {
     # valid
     expect_silent(element(x, 1))
     replicate(5, {
-        i <- sample(SpatialData:::.LAYERS, 1)
+        i <- sample(.LAYERS, 1)
         j <- sample(names(attr(x, i)), 1)
         expect_identical(x[[i]][[j]], element(x, j))
     })
+})
+
+test_that("element<-()", {
+    i <- vapply(colnames(x), \(.) .[1], character(1))
+    for (. in i) {
+        y <- x; element(y, .) <- element(x, .)
+        expect_identical(element(y, .), element(x, .))
+        y <- x; element(y, .) <- NULL
+        expect_error(element(y, .))
+    }
 })
 
 test_that("get all", {
@@ -47,7 +61,7 @@ test_that("get all", {
 })
 
 test_that("get one", {
-    env <- asNamespace("SpatialData")
+    env <- asNamespace("spatialdataR")
     # i=numeric
     mapply(f=fun, t=typ, \(f, t)
         expect_is(get(f, envir=env)(x, i=1), t))
@@ -67,13 +81,24 @@ test_that("get one", {
 
 # set ----
 
+obj <- list(
+    images=SpatialDataImage(), 
+    labels=SpatialDataLabel(),
+    shapes=SpatialDataShape(), 
+    points=SpatialDataPoint(),
+    tables=SingleCellExperiment())
+
 test_that("set all", {
+<<<<<<< HEAD
     obj <- list(
         sdImage(), LabelArray(),
         ShapeFrame(), PointFrame(),
         SingleCellExperiment())
     names(obj) <- SpatialData:::.LAYERS
     for (. in SpatialData:::.LAYERS) {
+=======
+    for (. in .LAYERS) {
+>>>>>>> main
         y <- x; y[[.]] <- list()
         expect_length(y[[.]], 0)
         # character
@@ -97,20 +122,23 @@ test_that("set one", {
         expect_true(m == (n-1))
     }
     # value=in/valid
+<<<<<<< HEAD
     obj <- list(
         sdImage(), LabelArray(),
         ShapeFrame(), PointFrame(),
         SingleCellExperiment())
+=======
+>>>>>>> main
     mapply(f=fun, o=obj, t=typ, \(f, o, t) {
         set <- get(paste0(f, "<-"))
         nms <- get(paste0(f, "Names"))
         # character
         x <- set(x, i=".", value=o)
         expect_true("." %in% nms(x))
-        expect_is(get(f, envir=asNamespace("SpatialData"))(x, "."), t)
+        expect_is(get(f, envir=asNamespace("spatialdataR"))(x, "."), t)
         # numeric
         x <- set(x, i=1, value=o)
-        expect_is(get(f, envir=asNamespace("SpatialData"))(x, 1), t)
+        expect_is(get(f, envir=asNamespace("spatialdataR"))(x, 1), t)
         # missing
         n <- \(.) length(get(paste0(f, "s"))(.))
         expect_silent(set(x, value=o))
@@ -136,9 +164,9 @@ test_that("set nms", {
     y <- x; val <- letters[seq_along(images(x))]
     expect_silent(imageNames(y) <- val)
     expect_identical(imageNames(y), val)
-    r <- region(SpatialData::table(x))
+    r <- region(table(x))
     y <- x; labelNames(y) <- "x"
-    r <- region(SpatialData::table(y))
+    r <- region(table(y))
     expect_identical(r, "x")
 })
 
@@ -159,7 +187,7 @@ test_that("$", {
 
 # sub ----
 
-test_that("[,Shape/PointFrame", {
+test_that("[,sdShape/Point", {
     y <- shape(x)
     expect_error(y[-1,])
     # one index subsets in vector-like fashion
@@ -181,19 +209,13 @@ test_that("[,Shape/PointFrame", {
     expect_identical(dim(y[,]), dim(y)) # none
 })
 
-test_that("[,LabelArray", {
+test_that("[,sdLabel", {
     y <- label(x)
     # logical
     expect_identical(y[TRUE,TRUE], y)
     expect_equal(dim(y[FALSE,FALSE]), c(0,0))
     expect_equal(dim(y[FALSE,TRUE]), c(0,ncol(y)))
     expect_equal(dim(y[TRUE,FALSE]), c(nrow(y),0))
-    # i <- logical(nrow(y)); j <- logical(ncol(y))
-    # n <- replicate(2, sample(seq(2, 10), 1))
-    # i[sample(nrow(y), n[1])] <- TRUE
-    # j[sample(ncol(y), n[2])] <- TRUE
-    # expect_equal(nrow(y[i,]), n[1])
-    # expect_equal(ncol(y[,j]), n[2])
     # numeric
     expect_identical(y[,], y) # none
     expect_equal(nrow(y[1,]), 1) # no j

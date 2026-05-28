@@ -4,12 +4,10 @@ setGeneric("image", \(x, ...) standardGeneric("image"))
 setGeneric("label", \(x, ...) standardGeneric("label"))
 setGeneric("shape", \(x, ...) standardGeneric("shape"))
 setGeneric("point", \(x, ...) standardGeneric("point"))
-setGeneric("table", \(x, ...) standardGeneric("table"))
 
 # get all ----
 
 setGeneric("images", \(x, ...) standardGeneric("images"))
-setGeneric("labels", \(x, ...) standardGeneric("labels"))
 setGeneric("shapes", \(x, ...) standardGeneric("shapes"))
 setGeneric("points", \(x, ...) standardGeneric("points"))
 setGeneric("tables", \(x, ...) standardGeneric("tables"))
@@ -62,7 +60,6 @@ setGeneric("addCT", \(x, ...) standardGeneric("addCT"))
 setGeneric("scale", \(x, t, ...) standardGeneric("scale"))
 setGeneric("rotate", \(x, t, ...) standardGeneric("rotate"))
 setGeneric("sequence", \(x, t, ...) standardGeneric("sequence"))
-setGeneric("transform", \(x, i, ...) standardGeneric("transform"))
 setGeneric("translation", \(x, t, ...) standardGeneric("translation"))
 
 setGeneric("flip", \(x, ...) standardGeneric("flip"))
@@ -86,7 +83,7 @@ setGeneric("instance_key<-", \(x, value) standardGeneric("instance_key<-"))
 
 # uts ----
 
-setGeneric("data", \(x, ...) standardGeneric("data"))
+setGeneric("data", \(...) standardGeneric("data"))
 setGeneric("meta", \(x, ...) standardGeneric("meta"))
 
 setGeneric("data<-", \(x, ..., value) standardGeneric("data<-"))
@@ -94,6 +91,7 @@ setGeneric("meta<-", \(x, ..., value) standardGeneric("meta<-"))
 
 setGeneric("layer", \(x, i, ...) standardGeneric("layer"))
 setGeneric("element", \(x, i, ...) standardGeneric("element"))
+setGeneric("element<-", \(x, i, value) standardGeneric("element<-"))
 setGeneric("elements", \(x, i, ...) standardGeneric("elements"))
 
 setGeneric("query", \(x, ...) standardGeneric("query"))
@@ -107,6 +105,7 @@ setGeneric("centroids", \(x, ...) standardGeneric("centroids"))
 setGeneric("data_type", \(x, ...) standardGeneric("data_type"))
 setGeneric("geom_type", \(x, ...) standardGeneric("geom_type"))
 setGeneric("multiscales", \(x, ...) standardGeneric("multiscales"))
+setGeneric("datasets", \(x, ...) standardGeneric("datasets"))
 
 # tbl ----
 

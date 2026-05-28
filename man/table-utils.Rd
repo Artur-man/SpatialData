@@ -46,6 +46,8 @@ specifies which \code{assay} to use when \code{j} is a row name.}
 \item{drop}{logical; should observations (columns)
 that don't belong to \code{i} be filtered out?}
 
+\item{...}{option arguments passed to and from other methods.}
+
 \item{rk, ik}{character string; region and instance key (the latter will be
 ignored if an instance key is already specified within element \code{i}).}
 
@@ -70,7 +72,7 @@ ignored if an instance key is already specified within element \code{i}).}
 \examples{
 library(SingleCellExperiment)
 x <- file.path("extdata", "blobs.zarr")
-x <- system.file(x, package="SpatialData")
+x <- system.file(x, package="spatialdataR")
 x <- readSpatialData(x)
 
 # check if element has a 'table'

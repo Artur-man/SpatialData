@@ -3,15 +3,15 @@
 \name{extent}
 \alias{extent}
 \alias{extent,SpatialData-method}
-\alias{extent,sdArray-method}
-\alias{extent,sdFrame-method}
+\alias{extent,SpatialDataArray-method}
+\alias{extent,SpatialDataFrame-method}
 \title{Spatial element extent}
 \usage{
 \S4method{extent}{SpatialData}(x, i = 1)
 
-\S4method{extent}{sdArray}(x, i = 1)
+\S4method{extent}{SpatialDataArray}(x, i = 1)
 
-\S4method{extent}{sdFrame}(x, i = 1)
+\S4method{extent}{SpatialDataFrame}(x, i = 1)
 }
 \arguments{
 \item{x}{a \code{SpatialData} element (any but table).}
@@ -26,7 +26,7 @@ Spatial element extent
 }
 \examples{
 x <- file.path("extdata", "blobs.zarr")
-x <- system.file(x, package="SpatialData")
+x <- system.file(x, package="spatialdataR")
 x <- readSpatialData(x, tables=FALSE)
 
 # object-wide

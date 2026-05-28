@@ -16,6 +16,7 @@
 #' @param rk,ik character string; region and instance key (the latter will be
 #'   ignored if an instance key is already specified within element \code{i}).
 #' @param y \code{SingleCellExperiment} containing annotations for \code{i}.
+#' @param ... option arguments passed to and from other methods.
 #'
 #' @returns
 #' \itemize{
@@ -33,7 +34,7 @@
 #' @examples
 #' library(SingleCellExperiment)
 #' x <- file.path("extdata", "blobs.zarr")
-#' x <- system.file(x, package="SpatialData")
+#' x <- system.file(x, package="spatialdataR")
 #' x <- readSpatialData(x)
 #'
 #' # check if element has a 'table'
@@ -117,7 +118,7 @@ setMethod("getTable", c("SpatialData", "character"), \(x, i, j, assay=1, drop=TR
     stopifnot(isTRUE(drop) || isFALSE(drop))
     # get 'table' annotating 'i', if any
     nm <- hasTable(x, i, name=TRUE) 
-    t <- SpatialData::table(x, nm)
+    t <- table(x, nm)
     # only keep observations belonging to 'i' (optional)
     if (drop) {
         rk <- region_key(t)
@@ -127,10 +128,10 @@ setMethod("getTable", c("SpatialData", "character"), \(x, i, j, assay=1, drop=TR
         t <- t[, cd == i]
         l <- names(which(vapply(colnames(x), \(.) i %in% ., logical(1))))
         y <- x[[l]][[i]]
-        i <- if (is(y, "LabelArray")) {
+        i <- if (is(y, "SpatialDataLabel")) {
             instances(y)
-        } else if (is(y, "ShapeFrame")) {
-            if (ik %in% names(y)) pull(y, !!ik) else seq(0, length(y)-1)
+        } else if (is(y, "SpatialDataShape")) {
+            if (ik %in% names(y)) pull(y, !!ik) else seq_along(y)
         } else stop ("Only labels and shapes can have tables.")
         t <- t[, instances(t) %in% i]
     }
@@ -148,6 +149,7 @@ setMethod("getTable", c("SpatialData", "character"), \(x, i, j, assay=1, drop=TR
 #' @export
 setMethod("setTable", c("SpatialData", "ANY"), \(x, i, ..., name=NULL, rk="rk", ik="ik") .invalid_i())
 
+# TODO: should this comment be removed ?
 # it seems pull below dispatches to arrow, and a warning on as_vector was being produced
 #' @rdname table-utils
 #' @importFrom methods as
@@ -158,7 +160,7 @@ setMethod("setTable", c("SpatialData", "ANY"), \(x, i, ..., name=NULL, rk="rk", 
 #' @export
 setMethod("setTable", c("SpatialData", "character"), \(x, i, y,
     name=NULL, rk="region", ik="instance_id") {
-    
+
     # validity
     stopifnot(
         is(y, "SingleCellExperiment"),
@@ -190,10 +192,15 @@ setMethod("setTable", c("SpatialData", "character"), \(x, i, y,
     }
     
     e <- element(x, i)
+    if (is(e, "SpatialDataShape") &&
+        ik %in% names(e)) {
+        instance_key(meta(e)) <- ik
+        element(x, i) <- e
+    }
     n <- length(instances(e))
     if (ncol(y) != n) stop(
         "'instances<-' have not been set on 'y'; ",
         "'ncol(y)' must match 'nrow(element(x, i))'")
     instances(y) <- instances(e)
-    SpatialData::`table<-`(x, i=name, value=y)
+    spatialdataR::`table<-`(x, i=name, value=y)
 })

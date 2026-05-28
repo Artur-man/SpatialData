@@ -1,27 +1,47 @@
 #' @name SpatialData
 #' @title The `SpatialData` class
 #' 
-#' @description ...
+#' @aliases data meta 
+#' @aliases layer element element<-
+#' @aliases image label point shape table
+#' @aliases images labels points shapes tables
+#' @aliases image<- label<- point<- shape<- table<-
+#' @aliases images<- labels<- points<- shapes<- tables<-
+#' @aliases imageNames labelNames pointNames shapeNames tableNames
+#' @aliases imageNames<- labelNames<- pointNames<- shapeNames<- tableNames<-
+#' @aliases [[<-,SpatialData,character,ANY-method
+#' @aliases [[<-,SpatialData,numeric,ANY-method
 #' 
-#' @param images list of \code{\link{sdImage}}s
-#' @param labels list of \code{\link{LabelArray}}s
-#' @param points list of \code{\link{PointFrame}}s
-#' @param shapes list of \code{\link{ShapeFrame}}s
+#' @description 
+#' \code{SpatialData} provides an R interface to Python's \code{spatialdata},
+#' which enables the representation of diverse spatial omics datasets using 
+#' the OME-NGFF (Next Generation File Format) standard. In R, 
+#' \itemize{
+#' \item images and labels are \code{ZarrArray}s (\code{Rarr} package).
+#' \item points and shapes are managed using \code{duckspatial} tables.
+#' \item tables are \code{SingleCellExperiment}s (read with \code{anndataR}).}
+#' 
+#' @param images list of \code{\link{SpatialDataImage}}s
+#' @param labels list of \code{\link{SpatialDataLabel}}s
+#' @param points list of \code{\link{SpatialDataPoint}}s
+#' @param shapes list of \code{\link{SpatialDataShape}}s
 #' @param tables list of \code{SingleCellExperiment}s
-#' @param x \code{SpatialData}
+#' @param x,object \code{SpatialData} object.
 #' @param i,j character string, scalar or vector of indices
 #'   specifying the element to extract from a given layer.
 #' @param drop ignored.
 #' @param name character string for extraction (see \code{?base::`$`}).
 #' @param value (list of) element(s) with layer-compliant object(s), 
-#'   or NULL/\code{list()} to remove an element/layer completely.
+#'   or NULL/\code{list()} to remove an element/layer completely; 
+#'   for \code{element<-}, a single \code{SpatialDataElement}
+#'   of the same class as \code{element(x, i)}.
 #' @param ... optional arguments passed to and from other methods.
 #'
 #' @return \code{SpatialData}
 #'
 #' @examples
 #' x <- file.path("extdata", "blobs.zarr")
-#' x <- system.file(x, package="SpatialData")
+#' x <- system.file(x, package="spatialdataR")
 #' (x <- readSpatialData(x))
 #' 
 #' # subsetting

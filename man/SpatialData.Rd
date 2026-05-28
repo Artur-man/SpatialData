@@ -5,10 +5,48 @@
 \alias{SpatialData-class}
 \alias{.SpatialData}
 \alias{SpatialData}
+\alias{data}
+\alias{meta}
+\alias{layer}
+\alias{element}
+\alias{element<-}
+\alias{image}
+\alias{label}
+\alias{point}
+\alias{shape}
+\alias{table}
+\alias{images}
+\alias{labels}
+\alias{points}
+\alias{shapes}
+\alias{tables}
+\alias{image<-}
+\alias{label<-}
+\alias{point<-}
+\alias{shape<-}
+\alias{table<-}
+\alias{images<-}
+\alias{labels<-}
+\alias{points<-}
+\alias{shapes<-}
+\alias{tables<-}
+\alias{imageNames}
+\alias{labelNames}
+\alias{pointNames}
+\alias{shapeNames}
+\alias{tableNames}
+\alias{imageNames<-}
+\alias{labelNames<-}
+\alias{pointNames<-}
+\alias{shapeNames<-}
+\alias{tableNames<-}
+\alias{[[<-,SpatialData,character,ANY-method}
+\alias{[[<-,SpatialData,numeric,ANY-method}
 \alias{$,SpatialData-method}
+\alias{$<-,SpatialData-method}
 \alias{[[,SpatialData,numeric,ANY-method}
 \alias{[[,SpatialData,character,ANY-method}
-\alias{data,SpatialDataElement-method}
+\alias{data,ANY-method}
 \alias{meta,SpatialDataElement-method}
 \alias{[,SpatialData,ANY,ANY,ANY-method}
 \alias{rownames,SpatialData-method}
@@ -19,19 +57,25 @@
 \alias{element,SpatialData,numeric-method}
 \alias{element,SpatialData,missing-method}
 \alias{element,SpatialData,ANY-method}
-\alias{[[<-,SpatialData,numeric,ANY-method}
-\alias{[[<-,SpatialData,character,ANY-method}
+\alias{element<-,SpatialData,character-method}
+\alias{images,SpatialData-method}
+\alias{labels,SpatialData-method}
+\alias{points,SpatialData-method}
+\alias{shapes,SpatialData-method}
+\alias{tables,SpatialData-method}
 \title{The `SpatialData` class}
 \usage{
 SpatialData(images, labels, points, shapes, tables)
 
 \S4method{$}{SpatialData}(x, name)
 
+\S4method{$}{SpatialData}(x, name) <- value
+
 \S4method{[[}{SpatialData,numeric,ANY}(x, i, j, ...)
 
 \S4method{[[}{SpatialData,character,ANY}(x, i, j, ...)
 
-\S4method{data}{SpatialDataElement}(x)
+\S4method{data}{ANY}(...)
 
 \S4method{meta}{SpatialDataElement}(x)
 
@@ -53,26 +97,41 @@ SpatialData(images, labels, points, shapes, tables)
 
 \S4method{element}{SpatialData,ANY}(x, i)
 
+\S4method{element}{SpatialData,character}(x, i) <- value
+
 \S4method{images}{SpatialData}(x)
+
+\S4method{labels}{SpatialData}(object)
+
+\S4method{points}{SpatialData}(x)
+
+\S4method{shapes}{SpatialData}(x)
+
+\S4method{tables}{SpatialData}(x)
 
 \S4method{[[}{SpatialData,numeric,ANY}(x, i) <- value
 
 \S4method{[[}{SpatialData,character,ANY}(x, i) <- value
 }
 \arguments{
-\item{images}{list of \code{\link{sdImage}}s}
+\item{images}{list of \code{\link{SpatialDataImage}}s}
 
-\item{labels}{list of \code{\link{LabelArray}}s}
+\item{labels}{list of \code{\link{SpatialDataLabel}}s}
 
-\item{points}{list of \code{\link{PointFrame}}s}
+\item{points}{list of \code{\link{SpatialDataPoint}}s}
 
-\item{shapes}{list of \code{\link{ShapeFrame}}s}
+\item{shapes}{list of \code{\link{SpatialDataShape}}s}
 
 \item{tables}{list of \code{SingleCellExperiment}s}
 
-\item{x}{\code{SpatialData}}
+\item{x, object}{\code{SpatialData} object.}
 
 \item{name}{character string for extraction (see \code{?base::`$`}).}
+
+\item{value}{(list of) element(s) with layer-compliant object(s), 
+or NULL/\code{list()} to remove an element/layer completely; 
+for \code{element<-}, a single \code{SpatialDataElement}
+of the same class as \code{element(x, i)}.}
 
 \item{i, j}{character string, scalar or vector of indices
 specifying the element to extract from a given layer.}
@@ -80,19 +139,22 @@ specifying the element to extract from a given layer.}
 \item{...}{optional arguments passed to and from other methods.}
 
 \item{drop}{ignored.}
-
-\item{value}{(list of) element(s) with layer-compliant object(s), 
-or NULL/\code{list()} to remove an element/layer completely.}
 }
 \value{
 \code{SpatialData}
 }
 \description{
-...
+\code{SpatialData} provides an R interface to Python's \code{spatialdata},
+which enables the representation of diverse spatial omics datasets using 
+the OME-NGFF (Next Generation File Format) standard. In R, 
+\itemize{
+\item images and labels are \code{ZarrArray}s (\code{Rarr} package).
+\item points and shapes are managed using \code{duckspatial} tables.
+\item tables are \code{SingleCellExperiment}s (read with \code{anndataR}).}
 }
 \examples{
 x <- file.path("extdata", "blobs.zarr")
-x <- system.file(x, package="SpatialData")
+x <- system.file(x, package="spatialdataR")
 (x <- readSpatialData(x))
 
 # subsetting

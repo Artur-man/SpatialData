@@ -2,6 +2,7 @@
 % Please edit documentation in R/combine.R
 \name{combine}
 \alias{combine}
+\alias{combine,SpatialData,SpatialData-method}
 \title{Combine two \code{SpatialData} objects}
 \usage{
 \S4method{combine}{SpatialData,SpatialData}(x, y, ...)
@@ -20,12 +21,11 @@ Combine two \code{SpatialData} objects
 }
 \examples{
 x <- file.path("extdata", "blobs.zarr")
-x <- system.file(x, package="SpatialData")
+x <- system.file(x, package="spatialdataR")
 x <- readSpatialData(x)
 
 y <- combine(x, x)
 imageNames(y)
 region(table(y, 1))
 region(table(y, 2))
-
 }

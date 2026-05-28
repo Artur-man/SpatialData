@@ -12,21 +12,18 @@
 #'   Control which elements should be read for each layer.
 #'   The default, NULL, reads all elements; alternatively, may be FALSE
 #'   to skip a layer, or a integer vector specifying which elements to read.
-#' @param anndataR logical specifying whether
-#'   to use \code{anndataR} to read tables;
-#'   defaults to FALSE in `readSpatialData`, and `readTable`,
-#'   so that pythonic \code{anndata} are used.
 #' @param ... option arguments passed to and from other methods.
 #'
 #' @return
 #' \itemize{
 #' \item{For \code{readSpatialData}, a \code{SpatialData}.},
-#' \item{For element readers, a \code{sdImage}, \code{LabelArray},
-#' \code{PointFrame}, \code{ShapeFrame}, or \code{SingleCellExperiment}.}}
+#' \item{For element readers, 
+#' a \code{SpatialDataImage/Label/Point/Shape} 
+#' or \code{SingleCellExperiment}.}}
 #'
 #' @examples
 #' zs <- file.path("extdata", "blobs.zarr")
-#' zs <- system.file(zs, package="SpatialData")
+#' zs <- system.file(zs, package="spatialdataR")
 #'
 #' # read complete Zarr store
 #' (sd <- readSpatialData(zs))
@@ -49,10 +46,15 @@ NULL
 #' @importFrom ZarrArray ZarrArray
 .readArray <- function(x, ...) {
     md <- read_zarr_attributes(x)
-    ps <- .get_multiscales_dataset_paths(md)
-    ps <- file.path(x, as.character(ps))
-    as <- lapply(ps, ZarrArray)
-    list(array=as, md=md)
+    mdattr <- SpatialDataAttrs(md)
+    # TODO: paths to datasets have to be validated properly in the future
+    # https://ngff.openmicroscopy.org/specifications/0.5/index.html#images
+    # The name of the array is arbitrary with the ordering defined by
+    # by the "multiscales" metadata, but is often a sequence starting at 0.
+    ds <- .validate_multiscales_paths(x, datasets(mdattr))
+    ds <- file.path(x, as.character(ds))
+    as <- lapply(ds, ZarrArray)
+    list(array=as, mdattr=mdattr)
 }
 
 #' @rdname readSpatialData
@@ -61,22 +63,21 @@ NULL
 readImage <- function(x, ...) {
     # l <- .readArray(x, ...)
     md <- read_zarr_attributes(x)
-    ps <- .get_multiscales_dataset_paths(md)
-    ps <- file.path(x, as.character(ps))
-    mt <- Zattrs(md)
-    # sdImage(data=as, 
-    #         meta=list(axes = vapply(axes(mt), \(.) .$name, character(1))), 
-    #         ...)
-    as <- ImageArray(levels = lapply(ps, ZarrArray),
-                     meta = list(axes = vapply(axes(mt), \(.) .$name, character(1))))
-    sdImage(data=as, meta=Zattrs(md), ...)
+    mdattr <- SpatialDataAttrs(md)
+    ds <- .validate_multiscales_paths(x, datasets(mdattr))
+    ds <- file.path(x, as.character(ds))
+    as <- ImageArray(levels = lapply(ds, ZarrArray),
+                     meta = list(axes = vapply(axes(mdattr), \(.) .$name, character(1))))
+    SpatialDataImage(data=as, meta=mdattr, ...)
+    # l <- .readArray(x, ...)
+    # SpatialDataImage(data=l$array, meta=l$mdattr, ...)
 }
 
 #' @rdname readSpatialData
 #' @export
 readLabel <- function(x, ...) {
     l <- .readArray(x, ...)
-    LabelArray(data=l$array, meta=Zattrs(l$md), ...)
+    SpatialDataLabel(data=l$array, meta=l$mdattr, ...)
 }
 
 #' @rdname readSpatialData
@@ -88,22 +89,22 @@ readPoint <- function(x, ...) {
     pq <- list.files(x, "\\.parquet$", full.names=TRUE)
     md <- read_zarr_attributes(x)
     ax <- unlist(md$axes)
-    df <- ddbs_open_dataset(pq) |>
+    df <- ddbs_open_dataset(pq, conn=.conn()) |>
         mutate(geometry=sql(sprintf("ST_Point(%s, %s)", ax[1], ax[2]))) |>
         as_duckspatial_df(crs=NA_character_) |>
         select(-all_of(ax))
-    PointFrame(data=df, meta=Zattrs(md))
+    SpatialDataPoint(data=df, meta=SpatialDataAttrs(md))
 }
 
 #' @rdname readSpatialData
 #' @importFrom Rarr read_zarr_attributes
 #' @importFrom duckspatial ddbs_open_dataset
-#' @import geoarrow
 #' @export
 readShape <- function(x, ...) {
     md <- read_zarr_attributes(x)
     pq <- list.files(x, "\\.parquet$", full.names=TRUE)
-    ShapeFrame(data=ddbs_open_dataset(pq), meta=Zattrs(md))
+    df <- ddbs_open_dataset(pq, conn=.conn(), crs=NA_character_)
+    SpatialDataShape(data=df, meta=SpatialDataAttrs(md))
 }
 
 #' @export
@@ -155,6 +156,7 @@ readSpatialData <- function(x,
         lapply(j, \(.) do.call(f, list(.)))
     }
     
-    sd <- lapply(setNames(nm=.LAYERS[!skip]), .readLayer)
+    names(ls) <- ls <- .LAYERS[!skip]
+    sd <- lapply(ls, .readLayer)
     do.call(SpatialData, sd)
 }

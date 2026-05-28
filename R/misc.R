@@ -8,13 +8,13 @@
 #'
 #' @param object
 #'   \code{\link{SpatialData}} object or one of its elements,
-#'   i.e., an \code{Image/LabelArray} or \code{Point/ShapeFrame}.
+#'   i.e., a \code{SpatialDataImage/Label/Point/Shape}.
 #'
 #' @return \code{NULL}
 #'
 #' @examples
 #' zs <- file.path("extdata", "blobs.zarr")
-#' zs <- system.file(zs, package="SpatialData")
+#' zs <- system.file(zs, package="spatialdataR")
 #' (sd <- readSpatialData(zs))
 #'
 #' # show element
@@ -64,7 +64,7 @@ NULL
     d <- lapply(d, paste, collapse=",")
     cat(sprintf("- tables(%s):\n", length(t)))
     for (. in seq_along(t)) {
-        r <- paste(region(SpatialData::table(object, t[.])), collapse=",")
+        r <- paste(region(table(object, t[.])), collapse=",")
         cat(sprintf("  - %s (%s) [%s]\n", t[.], d[.], r))
     }
     # spaces
@@ -87,7 +87,7 @@ NULL
 setMethod("show", "SpatialData", .showSpatialData)
 
 #' @importFrom S4Vectors coolcat
-.showsdArray <- function(object) {
+.showArray <- function(object) {
     n.object <- length(object@data)
     cat("class: ", class(object), ifelse(n.object > 1, "(MultiScale)", ""),"\n")
     scales <- vapply(object@data, \(x) paste0(dim(x), collapse=","), character(1))
@@ -95,42 +95,31 @@ setMethod("show", "SpatialData", .showSpatialData)
 }
 
 #' @rdname misc
-setMethod("show", "LabelArray", .showsdArray)
+setMethod("show", "SpatialDataArray", .showArray)
 
 #' @importFrom S4Vectors coolcat
-.showsdImage <- function(object) {
-  n.object <- length(object@data)
-  cat("class: ", class(object), ifelse(n.object > 1, "(MultiScale)", ""),"\n")
-  scales <- vapply(levels(object@data), \(x) paste0(dim(x), collapse=","), character(1))
-  coolcat("Scales (%d): (%s)", scales)
-}
-
-#' @rdname misc
-setMethod("show", "sdImage", .showsdImage)
-
-#' @importFrom S4Vectors coolcat
-.showPointFrame <- function(object) {
-    cat("class: PointFrame\n")
+.showPoint <- function(object) {
+    cat("class: SpatialDataPoint\n")
     cat("count:", length(object), "\n")
     coolcat("data(%d): %s\n", names(object))
 }
 
 #' @rdname misc
-setMethod("show", "PointFrame", .showPointFrame)
+setMethod("show", "SpatialDataPoint", .showPoint)
 
 #' @importFrom S4Vectors coolcat
-.showShapeFrame <- function(object) {
-    cat("class: ShapeFrame\n")
+.showShape <- function(object) {
+    cat("class: SpatialDataShape\n")
     cat("count:", length(object), "\n")
     coolcat("data(%d): %s\n", names(object))
 }
 
 #' @rdname misc
-setMethod("show", "ShapeFrame", .showShapeFrame)
+setMethod("show", "SpatialDataShape", .showShape)
 
 #' @importFrom S4Vectors coolcat
-.showZattrs <- function(object) {
-    cat("class: Zattrs\n")
+.showAttrs <- function(object) {
+    cat("class: SpatialDataAttrs\n")
     # axes
     ax <- axes(object)
     cat(sprintf("axes(%d):\n", length(ax)))
@@ -178,4 +167,4 @@ setMethod("show", "ShapeFrame", .showShapeFrame)
         coolcat("channels(%d): %s\n", cs)
 }
 
-setMethod("show", "Zattrs", .showZattrs)
+setMethod("show", "SpatialDataAttrs", .showAttrs)

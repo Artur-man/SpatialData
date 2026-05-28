@@ -2,7 +2,7 @@
 #' @title Coord. trans. utilities
 #' @aliases axes CTlist CTname CTtype CTdata addCT rmvCT
 #' 
-#' @param x \code{SpatialData}, an element, or \code{Zattrs}.
+#' @param x \code{SpatialData}, an element, or \code{SpatialDataAttrs}.
 #' @param i for \code{CTpath}, source node label; else, string or 
 #'   scalar integer giving the name or index of a coordinate space.
 #' @param name character(1); name of coordinate space
@@ -22,7 +22,7 @@
 #' \item \code{CTlist}: list;
 #'   list of transformation specifications per OME-NGFF spec
 #' \item \code{add/rmvCT}: 
-#'   \code{SpatialDataElement} or \code{Zattrs} 
+#'   \code{SpatialDataElement} or \code{SpatialDataAttrs} 
 #'   with transformation(s) added/removed
 #' \item \code{axes}: list; 
 #'   each element is a character string (name), or list 
@@ -31,7 +31,7 @@
 #' 
 #' @examples
 #' x <- file.path("extdata", "blobs.zarr")
-#' x <- system.file(x, package="SpatialData")
+#' x <- system.file(x, package="spatialdataR")
 #' x <- readSpatialData(x, tables=FALSE)
 #' 
 #' # view available target coordinate systems
@@ -51,7 +51,7 @@ NULL
 
 #' @rdname CTutils
 #' @export
-setMethod("axes", "Zattrs", \(x, ...) {
+setMethod("axes", "SpatialDataAttrs", \(x, ...) {
     ms <- .ms(x)
     if (!is.null(ms)) x <- ms[[1]]
     if (is.null(x <- x$axes)) stop("couldn't find 'axes'") 
@@ -62,7 +62,7 @@ setMethod("axes", "Zattrs", \(x, ...) {
 
 #' @rdname CTutils
 #' @export
-setMethod("CTlist", "Zattrs", \(x, ...) {
+setMethod("CTlist", "SpatialDataAttrs", \(x, ...) {
     ms <- .ms(x)
     ct <- "coordinateTransformations"
     if (is.null(ms)) return(x[[ct]])
@@ -71,7 +71,7 @@ setMethod("CTlist", "Zattrs", \(x, ...) {
 
 #' @rdname CTutils
 #' @export
-setMethod("CTdata", "Zattrs", \(x, i=1, ...) {
+setMethod("CTdata", "SpatialDataAttrs", \(x, i=1, ...) {
     stopifnot(length(i) == 1)
     if (is.character(i)) {
         match.arg(i, CTname(x))
@@ -91,23 +91,33 @@ setMethod("CTdata", "Zattrs", \(x, i=1, ...) {
 
 #' @rdname CTutils
 #' @export
-setMethod("CTtype", "Zattrs", \(x, ...) {
+setMethod("CTtype", "SpatialDataAttrs", \(x, ...) {
     vapply(CTlist(x), \(.) .$type, character(1))
 })
 
 #' @rdname CTutils
 #' @export
-setMethod("CTname", "Zattrs", \(x, ...) {
+setMethod("CTname", "SpatialDataAttrs", \(x, ...) {
     vapply(CTlist(x), \(.) .$output$name, character(1))
 })
 
 # SpatialDataElement ----
 
-.SDE_METS <- c("axes", "CTlist", "CTtype", "CTname")
-for (. in .SDE_METS) {
-    setMethod(., "SpatialDataElement", 
-        eval(parse(text=sprintf("\\(x, ...) %s(meta(x), ...)", .))))
-}
+#' @rdname CTutils
+#' @export
+setMethod("axes", "SpatialDataElement", \(x, ...) axes(meta(x), ...))
+
+#' @rdname CTutils
+#' @export
+setMethod("CTlist", "SpatialDataElement", \(x, ...) CTlist(meta(x), ...))
+
+#' @rdname CTutils
+#' @export
+setMethod("CTtype", "SpatialDataElement", \(x, ...) CTtype(meta(x), ...))
+
+#' @rdname CTutils
+#' @export
+setMethod("CTname", "SpatialDataElement", \(x, ...) CTname(meta(x), ...))
 
 #' @rdname CTutils
 #' @export
@@ -130,7 +140,7 @@ setMethod("rmvCT", "SpatialDataElement",
 
 #' @rdname CTutils
 #' @export
-setMethod("rmvCT", "Zattrs", \(x, i) {
+setMethod("rmvCT", "SpatialDataAttrs", \(x, i) {
     nms <- CTname(x)
     if (is.numeric(i)) {
         if (any(i > length(nms)))
@@ -165,7 +175,8 @@ setMethod("rmvCT", "Zattrs", \(x, i) {
 
 #' @rdname CTutils
 #' @export
-setMethod("addCT", "SpatialDataElement", \(x, name, type, data) {
+setMethod("addCT", "SpatialDataElement", 
+    \(x, name, type="identity", data=NULL) {
     meta(x) <- addCT(meta(x), name, type, data); x })
 
 .check_ct <- \(x, type, data) {
@@ -183,20 +194,18 @@ setMethod("addCT", "SpatialDataElement", \(x, name, type, data) {
 
 #' @rdname CTutils
 #' @export
-setMethod("addCT", "Zattrs", \(x, name, type="identity", data=NULL) {
+setMethod("addCT", "SpatialDataAttrs", \(x, name, type="identity", data=NULL) {
     stopifnot(
         is.character(name), length(name) == 1,
         is.character(type), length(type) == 1)
     .check_ct(x, type, data)
     # use existing as skeleton
-    old <- CTlist(x)
-    new <- old[[1]][c("input", "output", "type")]
+    new <- .default_ct(axes(x))[[1]]
     new$type <- type
     new$output$name <- name
     new[[new$type]] <- data
-    # append/overwrite & stash
-    ms <- "multiscales"
-    ct <- "coordinateTransformations"
+    # append/overwrite
+    old <- CTlist(x)
     i <- match(name, CTname(x))
     if (is.na(i)) {
         new <- c(old, list(new))
@@ -204,10 +213,15 @@ setMethod("addCT", "Zattrs", \(x, name, type="identity", data=NULL) {
         old[[i]] <- new
         new <- old
     }
-    if (is.null(x[[ms]])) {
+    # update .zattrs
+    ms <- "multiscales"
+    ct <- "coordinateTransformations"
+    if (is.null(multiscales(x))) {
         x[[ct]] <- new
     } else {
-        x[[ms]][[1]][[ct]] <- new
+        switch(.zv(x), 
+            "0.3"=x$ome[[ms]][[1]][[ct]] <- new,
+            x[[ms]][[1]][[ct]] <- new)
     }
     return(x)
 })

@@ -17,7 +17,7 @@
 #'
 #' @examples
 #' zs <- file.path("extdata", "blobs.zarr")
-#' zs <- system.file(zs, package="SpatialData")
+#' zs <- system.file(zs, package="spatialdataR")
 #' sd <- readSpatialData(zs)
 #' 
 #' # filter by 'region' and propagate to shapes/points
@@ -33,7 +33,7 @@ NULL
 setMethod("query", "SpatialData", \(x, ..., i=1) {
     if (!length(tables(x)))
         stop("There aren't any tables")
-    t <- SpatialData::table(x, i)
+    t <- table(x, i)
     df <- data.frame(.i=seq_len(ncol(t)), colData(t), int_colData(t))
     df <- filter(df, ...)
     if (!nrow(df)) stop("Nothing left after query")

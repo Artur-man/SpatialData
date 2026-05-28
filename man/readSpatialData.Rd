@@ -39,24 +39,20 @@ path to a \code{SpatialData}-.zarr store.}
 \item{images, labels, points, shapes, tables}{Control which elements should be read for each layer.
 The default, NULL, reads all elements; alternatively, may be FALSE
 to skip a layer, or a integer vector specifying which elements to read.}
-
-\item{anndataR}{logical specifying whether
-to use \code{anndataR} to read tables;
-defaults to FALSE in `readSpatialData`, and `readTable`,
-so that pythonic \code{anndata} are used.}
 }
 \value{
 \itemize{
 \item{For \code{readSpatialData}, a \code{SpatialData}.},
-\item{For element readers, a \code{sdImage}, \code{LabelArray},
-\code{PointFrame}, \code{ShapeFrame}, or \code{SingleCellExperiment}.}}
+\item{For element readers, 
+a \code{SpatialDataImage/Label/Point/Shape} 
+or \code{SingleCellExperiment}.}}
 }
 \description{
 Reading `SpatialData`
 }
 \examples{
 zs <- file.path("extdata", "blobs.zarr")
-zs <- system.file(zs, package="SpatialData")
+zs <- system.file(zs, package="spatialdataR")
 
 # read complete Zarr store
 (sd <- readSpatialData(zs))

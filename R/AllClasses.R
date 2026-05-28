@@ -1,71 +1,41 @@
-.Zattrs <- setClass(
-    Class="Zattrs",
-    contains="list")
+#' @importFrom methods setClass setClassUnion setOldClass
 
-#' @importFrom methods setClassUnion
-#' @importClassesFrom S4Arrays Array
-setClassUnion(
-    "array_OR_df",
-    c("Array", "array", "data.frame"))
-
-.sdImage <- setClass(
-    Class="sdImage",
-    contains=c("Annotated"),
-    slots=list(data="ImageArray", meta="Zattrs"))
-# .sdImage <- setClass(
-#   Class="sdImage",
-#   contains=c("ImageArray"))
-
-.LabelArray <- setClass(
-    Class="LabelArray",
-    contains=c("Annotated"),
-    slots=list(data="list", meta="Zattrs"))
-
-# these are 'R6ClassGenerator's;
-# this somehow does the trick...
-setClass("FileSystemDataset", "VIRTUAL")
-setClass("arrow_dplyr_query", "VIRTUAL")
-setClass("tbl_duckdb_connection", "VIRTUAL")
-setClass("duckspatial_df", "VIRTUAL")
-setClass("Table", "VIRTUAL")
-
-# TODO: this isn't great... arrow::open_dataset gives a FileSystemDataset,
-# read_parquet gives a Table, dplyr calls give a query, but also wanna
-# be able to store a normal data.frame, maybe?
-#' @importFrom methods setClassUnion
-setClassUnion(
-    "arrow_OR_df",
-    c("tbl_duckdb_connection", "duckspatial_df", "FileSystemDataset", "Table", "arrow_dplyr_query", "data.frame"))
-
-.PointFrame <- setClass(
-    Class="PointFrame",
-    contains=c("Annotated"),
-    slots=list(data="arrow_OR_df", meta="Zattrs"))
-
-#' @importClassesFrom S4Vectors DFrame
-.ShapeFrame <- setClass(
-    Class="ShapeFrame",
-    contains=c("Annotated"),
-    slots=list(data="arrow_OR_df", meta="Zattrs"))
-
-setClassUnion("sdArray", c("sdImage", "LabelArray"))
-setClassUnion("sdFrame", c("PointFrame", "ShapeFrame"))
-
-setClassUnion(
-    "SpatialDataElement",
-    c("sdImage", "LabelArray", "PointFrame", "ShapeFrame"))
-
-#' @rdname SpatialData
 #' @export
+#' @rdname SpatialData
 .SpatialData <- setClass(
     Class="SpatialData",
     contains=c("list", "Annotated"),
     representation(
-        images="list",  # 'sdImage's
-        labels="list",  # 'LabelArray's
-        points="list",  # 'PointFrame's
-        shapes="list",  # 'ShapeFrame's
+        images="list",  # 'SpatialDataImage's
+        labels="list",  # 'SpatialDataLabel's
+        points="list",  # 'SpatialDataPoint's
+        shapes="list",  # 'SpatialDataShape's
         tables="list")) # 'SingleCellExperiment's
 
-. <- c("images", "labels", "points", "shapes", "tables")
-names(.LAYERS) <- .LAYERS <- .
+.LAYERS <- `names<-`(. <- c("images","labels","points","shapes","tables"), .)
+.SpatialDataAttrs <- setClass("SpatialDataAttrs", contains="list")
+setOldClass("duckspatial_df")
+
+setClass("SpatialDataImage", 
+         contains=c("Annotated", "VIRTUAL"),
+         slots=list(data="list", meta="SpatialDataAttrs"))
+
+setClass("SpatialDataLabel", 
+         contains=c("Annotated", "VIRTUAL"),
+         slots=list(data="list", meta="SpatialDataAttrs"))
+
+setClass("SpatialDataFrame",
+    contains=c("Annotated", "VIRTUAL"),
+    slots=list(data="duckspatial_df", meta="SpatialDataAttrs"))
+
+# .SpatialDataImage <- setClass("SpatialDataImage", contains="SpatialDataArray")
+# .SpatialDataLabel <- setClass("SpatialDataLabel", contains="SpatialDataArray")
+# setClassUnion(name = "SpatialDataArray", 
+#               members = c("SpatialDataImage", "SpatialDataLabel"))
+
+.SpatialDataPoint <- setClass("SpatialDataPoint", contains="SpatialDataFrame")
+.SpatialDataShape <- setClass("SpatialDataShape", contains="SpatialDataFrame")
+
+setClassUnion("SpatialDataElement", c(
+    "SpatialDataImage", "SpatialDataLabel", 
+    "SpatialDataPoint", "SpatialDataShape"))

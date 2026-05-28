@@ -7,13 +7,13 @@
 #' For \code{SpatialData} objects, \code{crop} propagates the operation 
 #' across all layers that share the coordinate space \code{j}.
 #' 
-#' For \code{sdFrame}s (points and shapes), cropping relies on 
+#' For \code{SpatialDataFrame}s (points and shapes), cropping relies on 
 #' \code{sf::st_intersects} (i.e., instances that intersect the 
 #' query region in any way are kept). For circle shapes, radii 
 #' are currently ignored (i.e., a circle is kept if its centroid 
 #' intersects the query region).
 #' 
-#' For \code{sdArray}s (images and labels), only bounding box 
+#' For \code{SpatialDataArray}s (images and labels), only bounding box 
 #' cropping is supported. The requested spatial bounding box is 
 #' projected into pixel coordinates, and the underlying array is 
 #' sliced accordingly. The \code{wh} metadata is updated to 
@@ -32,7 +32,7 @@
 #'
 #' @examples
 #' zs <- file.path("extdata", "blobs.zarr")
-#' zs <- system.file(zs, package="SpatialData")
+#' zs <- system.file(zs, package="spatialdataR")
 #' sd <- readSpatialData(zs, tables=FALSE)
 #'
 #' # bounding box crop of a SpatialData object
@@ -99,24 +99,54 @@ NULL
 }
 
 #' @importFrom sf st_as_sf st_coordinates
-.box2rev <- \(x, y) {
-    # assure x coordinates come first for 
-    # correct boundary retrieval at the end
+.box2rev <- \(x, y, j=1) {
+    # align query bounding box
     y <- y[c("xmin", "xmax", "ymin", "ymax")]
     df <- data.frame(
         x=c(y$xmin, y$xmax, y$xmax, y$xmin, y$xmin),
         y=c(y$ymin, y$ymin, y$ymax, y$ymax, y$ymin),
-        id=seq_len(length(y)+1))
-    names(df) <- c("x", "y", "id")
-    # TODO: utils for transformations from 
-    # array to frame with optional reverse
-    ct <- CTlist(x)
-    ts <- ct[[1]]$transformations
-    for (. in seq_along(ts))
-        ct[[1]]$transformations[[.]][[names(CTdata(x))[.]]] <- rev(CTdata(x)[[.]][-1])
-    md <- Zattrs(type="frame", trans=ct)
-    z <- ShapeFrame(df, meta=md)
+        id=seq_len(5))
+    # get transformation for space j
+    if (is.numeric(j)) j <- CTname(x)[j]
+    ct <- CTlist(x)[[match(j, CTname(x))]]
+    # identify spatial axes
+    axs <- axes(x)
+    nms <- vapply(axs, \(.) .$name, character(1))
+    ix <- match("x", nms)
+    iy <- match("y", nms)
+    if (is.na(ix) || is.na(iy)) {
+        # default to last two (YX)
+        n <- length(nms)
+        ix <- n; iy <- n-1
+    }
+    # helper to adapt transformation data to spatial (XY) dims
+    .adapt <- \(t, type) {
+        if (is.null(t)) return(NULL)
+        if (type %in% c("scale", "translation"))
+            return(c(t[ix], t[iy]))
+        if (type == "rotate") 
+            return(t[1])
+        return(t)
+    }
+    # adapt transformation
+    if (ct$type == "sequence") {
+        for (i in seq_along(ct$transformations)) {
+            type <- ct$transformations[[i]]$type
+            data <- ct$transformations[[i]][[type]]
+            ct$transformations[[i]][[type]] <- .adapt(data, type)
+        }
+    } else {
+        type <- ct$type
+        data <- ct[[type]]
+        ct[[type]] <- .adapt(data, type)
+    }
+    # update input axes from 'cyx' to 'xy'
+    ct$input$axes <- .default_ax(type="frame")
+    # create temporary shape & transform back
+    md <- SpatialDataAttrs(type="frame", trans=list(ct))
+    z <- SpatialDataShape(df, meta=md)
     z <- transform(z, 1, rev=TRUE)
+    # extract coordinates & return range
     z <- st_coordinates(st_as_sf(data(z)))
     z <- as.list(c(range(z[, 1]), range(z[, 2])))
     names(z) <- names(y)
@@ -127,16 +157,16 @@ NULL
 #' @rdname crop
 #' @importFrom methods is
 #' @importFrom sf st_bbox
-setMethod("crop", "sdArray", \(x, y, j=1, ...) {
+setMethod("crop", "SpatialDataArray", \(x, y, j=1, ...) {
     if (is.matrix(y)) {
         y <- .check_pol(y)
         y <- st_bbox(st_polygon(list(y)))
     }
     if (inherits(y, c("sf", "sfc", "sfg", "bbox")))
-        y <- as.list(y)
+        y <- as.list(st_bbox(y))
     # coordinate space alignment
     .check_box(y)
-    z <- .box2rev(x, y)
+    z <- .box2rev(x, y, j)
     # offset current origin
     wh <- metadata(x)$wh
     if (!is.null(wh)) {
@@ -174,7 +204,7 @@ setMethod("crop", "sdArray", \(x, y, j=1, ...) {
 #' @importFrom dplyr pull
 #' @importFrom duckspatial ddbs_intersects
 #' @importFrom sf st_sf st_sfc st_as_sfc st_bbox st_polygon st_geometry<-
-setMethod("crop", "sdFrame", \(x, y, j=1, ...) {
+setMethod("crop", "SpatialDataFrame", \(x, y, j=1, ...) {
     if (inherits(y, "sf")) {
         fd <- y
         st_geometry(fd) <- "geometry"
@@ -193,6 +223,7 @@ setMethod("crop", "sdFrame", \(x, y, j=1, ...) {
         fd <- st_sf(geometry=st_as_sfc(st_bbox(unlist(y))))
     }
     df <- data(transform(x, j))
+    fd <- data(SpatialDataShape(fd))
     ok <- ddbs_intersects(df, fd, sparse=TRUE)
     id_x <- NULL # R CMD check
     x[pull(ok, id_x), ]
@@ -200,19 +231,47 @@ setMethod("crop", "sdFrame", \(x, y, j=1, ...) {
 
 #' @export
 #' @rdname crop
+#' @importFrom dplyr right_join
 setMethod("crop", "SpatialData", \(x, y, j=1, ...) {
     if (is.numeric(j)) j <- CTname(x)[j]
     # crop elements that share coordinate space 'j'
-    z <- .lapplyElement(x, \(z) {
-        if (j %in% CTname(z))
-            crop(z, y, j=j)
-    })
-    # filter tables by remaining element(s)
-    ok <- unlist(colnames(z))
+    z <- .lapplyLayer(x, \(.) {
+        if (j %in% CTname(.)) {
+            crop(., y, j=j)
+        } else list()
+    }) 
+    # drop elements without content
+    z <- .lapplyElement(z, \(.) if (length(.) > 0) .)
+    z <- do.call("SpatialData", z)
+    tables(z) <- tables(x)
+    # filter tables for remaining region(s)/instance(s)
+    rs <- unlist(colnames(z))
     ts <- lapply(tables(z), \(t) {
-        t <- t[, regions(t) %in% ok]
-        region(t) <- intersect(region(t), ok)
-        return(t)
+        # filter for remaining element(s)
+        t <- t[, regions(t) %in% rs]
+        region(t) <- intersect(region(t), rs)
+        # table's regions-instances
+        df <- data.frame(
+            r=regions(t), 
+            i=instances(t),
+            keep=seq_len(ncol(t)))
+        # for each annotated element
+        rs <- intersect(region(t), unlist(colnames(z)))
+        is <- lapply(rs, \(r) {
+            # subset look-up
+            df <- df[df$r == r, ]
+            e <- element(z, r)
+            if (is(e, "SpatialDataShape")) {
+                # element's regions-instances
+                ik <- instance_key(t)
+                i <- if (ik %in% names(e)) e[[ik]] else seq_along(e)
+                fd <- data.frame(r, i)
+                # return table indices in element
+                right_join(df, fd, names(fd))$keep
+            } else df$keep
+        })
+        # subset table instances
+        t <- t[, unlist(is)]
     })
     tables(z) <- ts
     return(z)

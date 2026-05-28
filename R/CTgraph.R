@@ -2,7 +2,7 @@
 #' @title Coord. trans. graph
 #' @aliases CTgraph CTpath CTplot
 #' 
-#' @param x \code{SpatialData}, an element, or \code{Zattrs}.
+#' @param x \code{SpatialData}, an element, or \code{SpatialDataAttrs}.
 #' @param i character string; name of source node.
 #' @param j character string; name of target coordinate space.
 #' @param g base R graph; extracted with \code{CTgraph}.
@@ -25,7 +25,7 @@
 #' 
 #' @examples
 #' x <- file.path("extdata", "blobs.zarr")
-#' x <- system.file(x, package="SpatialData")
+#' x <- system.file(x, package="spatialdataR")
 #' x <- readSpatialData(x, tables=FALSE)
 #' 
 #' # object-wide
