@@ -47,13 +47,10 @@ NULL
 .readArray <- function(x, ...) {
     md <- read_zarr_attributes(x)
     mdattr <- SpatialDataAttrs(md)
-    # TODO: paths to datasets have to be validated properly in the future
-    # https://ngff.openmicroscopy.org/specifications/0.5/index.html#images
-    # The name of the array is arbitrary with the ordering defined by
-    # by the "multiscales" metadata, but is often a sequence starting at 0.
     ds <- .validate_multiscales_paths(x, datasets(mdattr))
     ds <- file.path(x, as.character(ds))
-    as <- lapply(ds, ZarrArray)
+    as <- ImageArray(levels = lapply(ds, ZarrArray),
+                     meta = list(axes = vapply(axes(mdattr), \(.) .$name, character(1))))
     list(array=as, mdattr=mdattr)
 }
 
@@ -61,39 +58,15 @@ NULL
 #' @importFrom ImageArray ImageArray
 #' @export
 readImage <- function(x, ...) {
-    # l <- .readArray(x, ...)
-    md <- read_zarr_attributes(x)
-    mdattr <- SpatialDataAttrs(md)
-    ds <- .validate_multiscales_paths(x, datasets(mdattr))
-    ds <- file.path(x, as.character(ds))
-    as <- ImageArray(levels = lapply(ds, ZarrArray),
-                     meta = list(axes = vapply(axes(mdattr), \(.) .$name, character(1))))
-    SpatialDataImage(data=as, meta=mdattr, ...)
-    # l <- .readArray(x, ...)
-    # SpatialDataImage(data=l$array, meta=l$mdattr, ...)
+    l <- .readArray(x, ...)
+    SpatialDataImage(data=l$array, meta=l$mdattr, ...)
 }
 
-#' #' @rdname readSpatialData
-#' #' @export
-#' readLabel <- function(x, ...) {
-#'     l <- .readArray(x, ...)
-#'     SpatialDataLabel(data=l$array, meta=l$mdattr, ...)
-#' }
-
 #' @rdname readSpatialData
-#' @importFrom ImageArray ImageArray
 #' @export
 readLabel <- function(x, ...) {
-  # l <- .readArray(x, ...)
-  md <- read_zarr_attributes(x)
-  mdattr <- SpatialDataAttrs(md)
-  ds <- .validate_multiscales_paths(x, datasets(mdattr))
-  ds <- file.path(x, as.character(ds))
-  as <- ImageArray(levels = lapply(ds, ZarrArray),
-                   meta = list(axes = vapply(axes(mdattr), \(.) .$name, character(1))))
-  SpatialDataLabel(data=as, meta=mdattr, ...)
-  # l <- .readArray(x, ...)
-  # SpatialDataImage(data=l$array, meta=l$mdattr, ...)
+    l <- .readArray(x, ...)
+    SpatialDataLabel(data=l$array, meta=l$mdattr, ...)
 }
 
 #' @rdname readSpatialData
