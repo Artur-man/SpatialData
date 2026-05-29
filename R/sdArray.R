@@ -156,35 +156,13 @@ setMethod("channels", "SpatialDataElement", \(x, ...) stop("only 'images' have c
 
 # sub ----
 
-.check_jk <- \(x, .) {
-    if (isTRUE(x)) return()
-    tryCatch(
-        stopifnot(
-            is.numeric(x), x == round(x),
-            diff(range(x)) == length(x)-1,
-            (y <- abs(x)) == seq(min(y), max(y))
-        ),
-        error=\(e) stop(sprintf("invalid '%s'", .))
-    )
-}
-
 #' @exportMethod [
 #' @rdname SpatialDataArray
-#' @importFrom utils head tail
-setMethod("[", "SpatialDataImage", \(x, i, j, k, ..., drop=FALSE) {
-    if (missing(i)) i <- seq_len(dim(x)[1])
-    if (missing(j)) j <- TRUE else if (isFALSE(j)) j <- 0 else .check_jk(j, "j")
-    if (missing(k)) k <- TRUE else if (isFALSE(k)) k <- 0 else .check_jk(k, "k")
-    data(x) <- data(x, NULL)[i,j,k]
-    x
-})
-
-#' @exportMethod [
-#' @rdname SpatialDataArray
-#' @importFrom utils head tail
-setMethod("[", "SpatialDataLabel", \(x, i, j, ..., drop=FALSE) {
-    if (missing(i)) i <- TRUE else if (isFALSE(i)) i <- 0 else .check_jk(i, "i")
-    if (missing(j)) j <- TRUE else if (isFALSE(j)) j <- 0 else .check_jk(j, "j")
-    data(x) <- data(x, NULL)[i,j]
+#' @import S4Arrays
+#' @importFrom ImageArray crop
+setMethod("[", "SpatialDataArray", \(x, i, j, ...) {
+    Nindex <- S4Arrays:::extract_Nindex_from_syscall(sys.call(), parent.frame())
+    stopifnot(length(dim(x)) == length(Nindex))
+    data(x) <- ImageArray::crop(data(x, NULL), index = Nindex)
     x
 })
