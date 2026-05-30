@@ -79,7 +79,8 @@ test_that("crop,sdImage", {
 
 test_that("crop,sdImage w/ previous translation", {
     y <- list(xmin=7, xmax=8, ymin=77, ymax=78)
-    i <- translation(image(x), c(0, 77, 7))
+    # TODO: translation is two dimensional
+    i <- translation(image(x), c(77, 7))
     j <- crop(i, y)
     expect_equal(dim(j), c(3,1,1))
     expect_identical(data(i)[,1,1], data(j)[,1,1])
