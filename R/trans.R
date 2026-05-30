@@ -48,9 +48,9 @@
 #' y["shapes", c("rot", "wide", "left")]
 NULL
 
-#' @importFrom BiocGenerics transform
 #' @export
 #' @rdname trans
+#' @importFrom BiocGenerics transform
 setMethod("transform", "SpatialDataElement", \(x, i=1, ...) {
     stopifnot(
         length(i) == 1, is.character(i) | 
@@ -70,7 +70,8 @@ setMethod("transform", "SpatialDataElement", \(x, i=1, ...) {
 
 #' @export
 #' @rdname trans
-setMethod("sequence", c("SpatialDataElement", "list"), \(x, t, ..., rev=FALSE) {
+#' @importFrom BiocGenerics sequence
+setMethod("sequence", "SpatialDataElement", \(x, t, ..., rev=FALSE) {
     if (rev) t <- rev(t)
     for (. in seq_along(t)) {
         if (is.null(t[[.]])) next
@@ -111,10 +112,10 @@ setMethod("flop", "SpatialDataArray", \(x, ...) .mirror(x, 90))
 #' @export
 #' @rdname trans
 #' @importFrom methods as
-#' @importFrom EBImage rotate
+#' @importFrom BiocGenerics rotate
 #' @importFrom S4Vectors metadata<-
-setMethod("rotate", c("SpatialDataArray", "numeric"), \(x, t, ..., rev=FALSE) {
-    # complement angle with 360 to turn counterclockwise
+setMethod("rotate", "SpatialDataArray", \(x, t, ..., rev=FALSE) {
+  # complement angle with 360 to turn counterclockwise
     stopifnot(length(t) == 1, is.finite(t))
     if (t %% 360 == 0) return(x)
     if (rev) t <- 360-t
@@ -149,8 +150,8 @@ setMethod("rotate", c("SpatialDataArray", "numeric"), \(x, t, ..., rev=FALSE) {
 
 #' @export
 #' @rdname trans
-setMethod("scale", 
-    c("SpatialDataArray", "numeric"), 
+#' @importFrom BiocGenerics scale
+setMethod("scale", "SpatialDataArray",
     \(x, t, ...) .trans_a(x, t, "scale", ...))
 
 .trans_a_trans <- \(x, t, rev=FALSE) {
@@ -159,8 +160,7 @@ setMethod("scale",
   stopifnot(is.numeric(t), is.finite(t), length(t) == 2)
   if (all(t == 0)) return(x)
 
-  # translate, ImageArray axes order for translation is x,y
-  data(x) <- ImageArray::translation(data(x, NULL), shift = rev(t))
+  data(x) <- ImageArray::translation(data(x, NULL), shift = t)
   x
 }
   
@@ -213,14 +213,14 @@ setMethod("translation",
 
 #' @export
 #' @rdname trans
-setMethod("rotate", 
-    c("SpatialDataFrame", "numeric"), 
+#' @importFrom BiocGenerics rotate
+setMethod("rotate", "SpatialDataFrame",
     \(x, t, ...) .trans_f(x, t, "rotate", ...))
 
 #' @export
 #' @rdname trans
-setMethod("scale", 
-    c("SpatialDataFrame", "numeric"), 
+#' @importFrom BiocGenerics scale
+setMethod("scale", "SpatialDataFrame",
     \(x, t, ...) .trans_f(x, t, "scale", ...))
 
 #' @export

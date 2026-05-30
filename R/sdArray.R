@@ -128,7 +128,9 @@ setMethod("data_type", "DelayedArray", \(x) {
 # internal use only!
 #' @noRd 
 .ch <- \(x) {
-    if (.zv(x) == "0.3") x <- x$ome
+    v <- tryCatch(.ome_ver(x), error=\(e) NULL)
+    if (is.null(v)) return()
+    if (v == "0.5") x <- x$ome
     unlist(x$omero$channels)
 }
 
@@ -145,12 +147,12 @@ setMethod("channels", "SpatialDataImage", \(x, ...) channels(meta(x)))
 setMethod("channels", "SpatialDataElement", \(x, ...) stop("only 'images' have channels"))
 
 # compares metadata dataset paths to arrays on disk
-#' @importFrom S4Vectors isSequence
 .validate_multiscales_paths <- function(x, ds) {
     ps <- list.files(x)
     ds <- ds[ds %in% ps]
     if (!length(ds))
-      stop("Invalid SpatialData image or label: metadata does not match the names of Zarr arrays")
+        stop("Invalid 'SpatialData' image or label:",
+            " metadata does not match the names of Zarr arrays")
     return(ds)
 }
 
@@ -158,7 +160,7 @@ setMethod("channels", "SpatialDataElement", \(x, ...) stop("only 'images' have c
 
 #' @exportMethod [
 #' @rdname SpatialDataArray
-setMethod("[", "SpatialDataArray", \(x, i, j,...) {
+setMethod("[", "SpatialDataArray", \(x, i, j,..., drop=FALSE) {
     cl <- sys.call()
     cl[[2]] <- substitute(data(x, NULL))
     data(x) <- eval(cl, parent.frame())

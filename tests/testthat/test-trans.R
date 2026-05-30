@@ -74,7 +74,7 @@ test_that("translation,labelArray", {
     expect_error(translation(x, numeric(3)))
     expect_error(translation(x, character(2)))
     # row
-    t <- c(n <- sample(77, 1), 0)
+    t <- c(0, n <- sample(77, 1))
     # TODO: ImageArray does not let negative indices, 
     #       but it should
     # z <- translation(y <- x[-1,-c(1,2)], t)
@@ -89,7 +89,7 @@ test_that("translation,labelArray", {
     expect_equal(md[[1]], c(0, dim(y)[2]))
     expect_equal(md[[2]], c(n, dim(y)[1]+n))
     # col
-    t <- c(0, n <- sample(77, 1))
+    t <- c(n <- sample(77, 1),0)
     # TODO: ImageArray does not let negative indices, 
     #       but it should
     # z <- translation(y <- x[-1,-c(1,2)], t)
