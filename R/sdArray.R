@@ -158,10 +158,9 @@ setMethod("channels", "SpatialDataElement", \(x, ...) stop("only 'images' have c
 
 #' @exportMethod [
 #' @rdname SpatialDataArray
-#' @import S4Arrays
-#' @importFrom ImageArray crop
 setMethod("[", "SpatialDataArray", \(x, i, j,...) {
     cl <- sys.call()
     cl[[2]] <- substitute(data(x, NULL))
-    eval(cl, parent.frame())
+    data(x) <- eval(cl, parent.frame())
+    x
 })
