@@ -123,42 +123,39 @@ setMethod("rotate", "SpatialDataArray", \(x, t, ..., rev=FALSE) {
     return(x)
 })
 
-.trans_a <- \(x, t, f=c("scale", "translation"), k=1, rev=FALSE) {
-    f <- match.arg(f)
-    n <- length(d <- dim(data(x, k)))
-    
-    # setup: identity, operator
-    map <- list(
-        ids=c(scale=1, translation=0),
-        ops=c(scale="*", translation="+"))
-    
-    # validation & identity check
-    stopifnot(is.numeric(t), is.finite(t), length(t) == n)
-    if (all(t == map$ids[f])) return(x)
-    if (rev) t <- if (f == "scale") 1/t else -t
-    
-    # project to spatial (XY) dims
-    if (n == 3) { t <- t[-1]; d <- d[-1] }
-    t <- rev(t); d <- rev(d)
-    
-    # update 'wh' metadata
-    wh <- metadata(x)$wh %||% list(c(0, d[1]), c(0, d[2]))
-    op <- get(map$ops[f])
-    metadata(x)$wh <- mapply(op, t, wh, SIMPLIFY=FALSE)
-    return(x)
+.trans_a_scale <- \(x, t, rev=FALSE) {
+  n <- length(d <- dim(x))
+  
+  # validation & identity check
+  stopifnot(is.numeric(t), is.finite(t), length(t) == 2)
+  if (all(t == 0)) return(x)
+  
+  # scale
+  if (rev) t <- 1/t
+  
+  # project to spatial (XY) dims
+  if (n == 3) { d <- d[-1] }
+  t <- rev(t); d <- rev(d)
+  
+  data(x) <- ImageArray::scale(data(x, NULL), 
+                               output.dim = as.integer(round(d*t)))
+  x
 }
 
 #' @export
 #' @rdname trans
 #' @importFrom BiocGenerics scale
 setMethod("scale", "SpatialDataArray",
-    \(x, t, ...) .trans_a(x, t, "scale", ...))
+    \(x, t, ...) .trans_a_scale(x, t, ...))
 
 .trans_a_trans <- \(x, t, rev=FALSE) {
 
   # validation & identity check
   stopifnot(is.numeric(t), is.finite(t), length(t) == 2)
   if (all(t == 0)) return(x)
+  
+  # project to spatial (XY) dims
+  t <- rev(t)
 
   data(x) <- ImageArray::translation(data(x, NULL), shift = t)
   x
