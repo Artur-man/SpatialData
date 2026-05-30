@@ -160,9 +160,8 @@ setMethod("channels", "SpatialDataElement", \(x, ...) stop("only 'images' have c
 #' @rdname SpatialDataArray
 #' @import S4Arrays
 #' @importFrom ImageArray crop
-setMethod("[", "SpatialDataArray", \(x, i, j, ...) {
-    Nindex <- S4Arrays:::extract_Nindex_from_syscall(sys.call(), parent.frame())
-    stopifnot(length(dim(x)) == length(Nindex))
-    data(x) <- ImageArray::crop(data(x, NULL), index = Nindex)
-    x
+setMethod("[", "SpatialDataArray", \(x, i, j,...) {
+    cl <- sys.call()
+    cl[[2]] <- substitute(data(x, NULL))
+    eval(cl, parent.frame())
 })

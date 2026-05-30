@@ -44,7 +44,7 @@ SpatialDataLabel(
 
 \S4method{channels}{SpatialDataElement}(x, ...)
 
-\S4method{[}{SpatialDataArray,ANY,ANY,ANY}(x, i, j, ..., drop = FALSE)
+\S4method{[}{SpatialDataArray,ANY,ANY,ANY}(x, i, j, ..., drop = TRUE)
 }
 \arguments{
 \item{data}{list of \code{ZarrArray}s}

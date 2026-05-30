@@ -66,7 +66,6 @@ Imports:
     RBGL,
     rlang,
     sf,
-    S4Arrays,
     S4Vectors,
     SingleCellExperiment,
     SummarizedExperiment,
