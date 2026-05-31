@@ -75,9 +75,11 @@ test_that("crop,sdImage", {
         ymin=dy <- 10, ymax=h <- 40)
     expect_equal(dim(j <- crop(i, y)), c(3, 30, 30))
     # TODO: there is no metadata anymore, use extent instead
-    # it crops and shift ... how to change the extent ? 
     # expect_equal(metadata(j)$wh, list(c(10, 40), c(10, 40)))
-    expect_equal(extent(j), list(c(10, 40), c(10, 40)))
+    expect_equal(
+      extent(j), 
+      setNames(list(c(10, 40), c(10, 40)), c("x", "y"))
+    )
 })
 
 test_that("crop,sdImage w/ previous translation", {
