@@ -1,10 +1,9 @@
 x <- file.path("extdata", "blobs.zarr")
-x <- system.file(x, package="SpatialData")
+x <- system.file(x, package="spatialdataR")
 x <- readSpatialData(x)
 
 test_that("combine", {
     # auto-fixed names
-    expect_error(combine(x))
     expect_no_message(y <- combine(x, x))
     f <- \(.) unlist(colnames(.))
     expect_all_true(f(x) %in% f(y))

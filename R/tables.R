@@ -34,7 +34,7 @@
 #' @examples
 #' library(SingleCellExperiment)
 #' x <- file.path("extdata", "blobs.zarr")
-#' x <- system.file(x, package="SpatialData")
+#' x <- system.file(x, package="spatialdataR")
 #' x <- readSpatialData(x)
 #'
 #' # check if element has a 'table'
@@ -149,6 +149,7 @@ setMethod("getTable", c("SpatialData", "character"), \(x, i, j, assay=1, drop=TR
 #' @export
 setMethod("setTable", c("SpatialData", "ANY"), \(x, i, ..., name=NULL, rk="rk", ik="ik") .invalid_i())
 
+# TODO: should this comment be removed ?
 # it seems pull below dispatches to arrow, and a warning on as_vector was being produced
 #' @rdname table-utils
 #' @importFrom methods as
@@ -201,5 +202,5 @@ setMethod("setTable", c("SpatialData", "character"), \(x, i, y,
         "'instances<-' have not been set on 'y'; ",
         "'ncol(y)' must match 'nrow(element(x, i))'")
     instances(y) <- instances(e)
-    SpatialData::`table<-`(x, i=name, value=y)
+    spatialdataR::`table<-`(x, i=name, value=y)
 })

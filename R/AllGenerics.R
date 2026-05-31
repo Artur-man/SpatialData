@@ -4,13 +4,10 @@ setGeneric("image", \(x, ...) standardGeneric("image"))
 setGeneric("label", \(x, ...) standardGeneric("label"))
 setGeneric("shape", \(x, ...) standardGeneric("shape"))
 setGeneric("point", \(x, ...) standardGeneric("point"))
-#setGeneric("table", \(x, ...) standardGeneric("table"))
-#' @importFrom BiocGenerics table
 
 # get all ----
 
 setGeneric("images", \(x, ...) standardGeneric("images"))
-setGeneric("labels", \(x, ...) standardGeneric("labels"))
 setGeneric("shapes", \(x, ...) standardGeneric("shapes"))
 setGeneric("points", \(x, ...) standardGeneric("points"))
 setGeneric("tables", \(x, ...) standardGeneric("tables"))
@@ -60,15 +57,10 @@ setGeneric("CTgraph", \(x, ...) standardGeneric("CTgraph"))
 setGeneric("rmvCT", \(x, ...) standardGeneric("rmvCT"))
 setGeneric("addCT", \(x, ...) standardGeneric("addCT"))
 
-setGeneric("scale", \(x, t, ...) standardGeneric("scale"))
-setGeneric("rotate", \(x, t, ...) standardGeneric("rotate"))
-setGeneric("sequence", \(x, t, ...) standardGeneric("sequence"))
-setGeneric("transform", \(x, i, ...) standardGeneric("transform"))
-setGeneric("translation", \(x, t, ...) standardGeneric("translation"))
-
 setGeneric("flip", \(x, ...) standardGeneric("flip"))
 setGeneric("flop", \(x, ...) standardGeneric("flop"))
 setGeneric("mirror", \(x, ...) standardGeneric("mirror"))
+setGeneric("translation", \(x, t, ...) standardGeneric("translation"))
 
 # sda ----
 
@@ -87,11 +79,9 @@ setGeneric("instance_key<-", \(x, value) standardGeneric("instance_key<-"))
 
 # uts ----
 
-setGeneric("data", \(...) standardGeneric("data"))
 setGeneric("meta", \(x, ...) standardGeneric("meta"))
-
-setGeneric("data<-", \(x, ..., value) standardGeneric("data<-"))
 setGeneric("meta<-", \(x, ..., value) standardGeneric("meta<-"))
+setGeneric("data<-", \(x, ..., value) standardGeneric("data<-"))
 
 setGeneric("layer", \(x, i, ...) standardGeneric("layer"))
 setGeneric("element", \(x, i, ...) standardGeneric("element"))

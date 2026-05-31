@@ -31,7 +31,7 @@
 #' 
 #' @examples
 #' x <- file.path("extdata", "blobs.zarr")
-#' x <- system.file(x, package="SpatialData")
+#' x <- system.file(x, package="spatialdataR")
 #' x <- readSpatialData(x, tables=FALSE)
 #' 
 #' # view available target coordinate systems
@@ -219,7 +219,8 @@ setMethod("addCT", "SpatialDataAttrs", \(x, name, type="identity", data=NULL) {
     if (is.null(multiscales(x))) {
         x[[ct]] <- new
     } else {
-        switch(.zv(x), 
+        switch( 
+            tryCatch(.ome_ver(x), error=\(e) "9.9"), 
             "0.3"=x$ome[[ms]][[1]][[ct]] <- new,
             x[[ms]][[1]][[ct]] <- new)
     }

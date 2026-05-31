@@ -14,7 +14,7 @@
 \alias{label}
 \alias{point}
 \alias{shape}
-\alias{table,ANY-method}
+\alias{table}
 \alias{images}
 \alias{labels}
 \alias{points}
@@ -46,7 +46,7 @@
 \alias{$<-,SpatialData-method}
 \alias{[[,SpatialData,numeric,ANY-method}
 \alias{[[,SpatialData,character,ANY-method}
-\alias{data,ANY-method}
+\alias{data,SpatialDataElement-method}
 \alias{meta,SpatialDataElement-method}
 \alias{[,SpatialData,ANY,ANY,ANY-method}
 \alias{rownames,SpatialData-method}
@@ -75,7 +75,7 @@ SpatialData(images, labels, points, shapes, tables)
 
 \S4method{[[}{SpatialData,character,ANY}(x, i, j, ...)
 
-\S4method{data}{ANY}(...)
+\S4method{data}{SpatialDataElement}(x, k = 1, ...)
 
 \S4method{meta}{SpatialDataElement}(x)
 
@@ -101,15 +101,13 @@ SpatialData(images, labels, points, shapes, tables)
 
 \S4method{images}{SpatialData}(x)
 
-\S4method{labels}{SpatialData}(x)
+\S4method{labels}{SpatialData}(object)
 
 \S4method{points}{SpatialData}(x)
 
 \S4method{shapes}{SpatialData}(x)
 
 \S4method{tables}{SpatialData}(x)
-
-\S4method{table}{ANY}(...)
 
 \S4method{[[}{SpatialData,numeric,ANY}(x, i) <- value
 
@@ -126,7 +124,7 @@ SpatialData(images, labels, points, shapes, tables)
 
 \item{tables}{list of \code{SingleCellExperiment}s}
 
-\item{x}{\code{SpatialData}}
+\item{x, object}{\code{SpatialData} object.}
 
 \item{name}{character string for extraction (see \code{?base::`$`}).}
 
@@ -156,7 +154,7 @@ the OME-NGFF (Next Generation File Format) standard. In R,
 }
 \examples{
 x <- file.path("extdata", "blobs.zarr")
-x <- system.file(x, package="SpatialData")
+x <- system.file(x, package="spatialdataR")
 (x <- readSpatialData(x))
 
 # subsetting

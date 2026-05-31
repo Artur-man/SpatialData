@@ -3,7 +3,7 @@
 #' 
 #' @aliases data meta 
 #' @aliases layer element element<-
-#' @aliases image label point shape table,ANY-method
+#' @aliases image label point shape table
 #' @aliases images labels points shapes tables
 #' @aliases image<- label<- point<- shape<- table<-
 #' @aliases images<- labels<- points<- shapes<- tables<-
@@ -26,7 +26,7 @@
 #' @param points list of \code{\link{SpatialDataPoint}}s
 #' @param shapes list of \code{\link{SpatialDataShape}}s
 #' @param tables list of \code{SingleCellExperiment}s
-#' @param x \code{SpatialData}
+#' @param x,object \code{SpatialData} object.
 #' @param i,j character string, scalar or vector of indices
 #'   specifying the element to extract from a given layer.
 #' @param drop ignored.
@@ -41,7 +41,7 @@
 #'
 #' @examples
 #' x <- file.path("extdata", "blobs.zarr")
-#' x <- system.file(x, package="SpatialData")
+#' x <- system.file(x, package="spatialdataR")
 #' (x <- readSpatialData(x))
 #' 
 #' # subsetting

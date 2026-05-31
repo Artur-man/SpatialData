@@ -1,5 +1,5 @@
 x <- file.path("extdata", "blobs.zarr")
-x <- system.file(x, package="SpatialData")
+x <- system.file(x, package="spatialdataR")
 x <- readSpatialData(x)
 
 .CTtype <- c(
@@ -94,7 +94,7 @@ test_that("rmvCT", {
 
 test_that("addCT", {
     # get 1st element from each layer
-    ls <- setdiff(SpatialData:::.LAYERS, "tables")
+    ls <- setdiff(.LAYERS, "tables")
     es <- lapply(ls, \(.) x[.,1][[.]][[1]])
     .check_data <- \(z, x) {
         expect_true("." %in% CTname(z))
