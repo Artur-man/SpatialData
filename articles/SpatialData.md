@@ -609,7 +609,7 @@ rbind(native=unlist(xy), scaled=unlist(yx))
 sessionInfo()
 ```
 
-    ## R Under development (unstable) (2026-09-01 r90464)
+    ## R Under development (unstable) (2026-09-07 r90504)
     ## Platform: x86_64-pc-linux-gnu
     ## Running under: Ubuntu 24.04.4 LTS
     ## 
@@ -645,7 +645,7 @@ sessionInfo()
     ##  [7] digest_0.6.39       lifecycle_1.0.5     sf_1.1-2           
     ## [10] paws.storage_0.10.0 magrittr_2.0.5      compiler_4.7.0     
     ## [13] rlang_1.3.0         sass_0.4.10         tools_4.7.0        
-    ## [16] yaml_2.3.12         knitr_1.51          S4Arrays_1.13.0    
+    ## [16] yaml_2.3.12         knitr_1.52          S4Arrays_1.13.0    
     ## [19] htmlwidgets_1.6.4   classInt_0.4-11     curl_8.0.0         
     ## [22] reticulate_1.47.0   DelayedArray_0.39.6 abind_1.4-8        
     ## [25] KernSmooth_2.23-27  withr_3.0.3         purrr_1.2.2        
